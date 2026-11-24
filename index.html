@@ -9,45 +9,48 @@
   <title>workoutOS</title>
   <style>
     /* =========================================================================
-       DESIGN TOKENS: TACTILE WARM STONE (LIGHT) & CALM GRAPHITE (DARK)
-       Muted Slate-Blue (#1D4ED8 / #60A5FA), Terracotta-Rust (#C2410C / #F97316),
-       and Deep Neutral Slate (#334155 / #94A3B8). Zero green tones or neon glows.
+       DESIGN TOKENS: TACTILE APPLE FITNESS / THINGS 3 iOS UTILITY PALETTE
+       Light Mode: Warm Stone/Paper (#F5F4F0)
+       Dark Mode:  Matte Graphite (#121316)
+       Accents:    Muted Slate-Blue (#1D4ED8 / #60A5FA) & Terracotta (#C2410C / #F97316)
        ========================================================================= */
     :root {
       --bg-base: #f5f4f0;
-      --glass-bg: rgba(255, 255, 255, 0.82);
-      --glass-bg-strong: rgba(255, 255, 255, 0.90);
+      --glass-bg: rgba(255, 255, 255, 0.84);
+      --glass-bg-strong: rgba(255, 255, 255, 0.94);
       --glass-border: rgba(28, 25, 23, 0.08);
       --glass-shadow:
         0 1px 2px rgba(28, 25, 23, 0.04),
         0 6px 16px -4px rgba(28, 25, 23, 0.05);
-      --well-bg: rgba(240, 238, 232, 0.72);
+      --well-bg: rgba(240, 238, 232, 0.78);
       --well-border: rgba(28, 25, 23, 0.07);
       --btn-bg: #ffffff;
-      --btn-border: rgba(28, 25, 23, 0.10);
+      --btn-border: rgba(28, 25, 23, 0.11);
       --btn-shadow: 0 1px 2px rgba(28, 25, 23, 0.04);
       --ink: #1c1917;
       --ink-sub: #44403c;
       --ink-muted: #78716c;
       --cobalt: #1d4ed8;
       --cobalt-soft: rgba(29, 78, 216, 0.09);
-      --indigo: #334155;
-      --indigo-soft: rgba(51, 65, 85, 0.09);
+      --slate: #334155;
+      --slate-soft: rgba(51, 65, 85, 0.09);
       --coral: #c2410c;
       --coral-soft: rgba(194, 65, 12, 0.09);
       --chart-grid: rgba(120, 113, 108, 0.18);
-      --dock-bg: rgba(245, 244, 240, 0.86);
+      --ring-track: rgba(28, 25, 23, 0.09);
+      --dock-bg: rgba(245, 244, 240, 0.88);
+      --backdrop-scrim: rgba(28, 25, 23, 0.34);
     }
 
     html.dark {
       --bg-base: #121316;
-      --glass-bg: rgba(28, 30, 36, 0.82);
-      --glass-bg-strong: rgba(28, 30, 36, 0.90);
+      --glass-bg: rgba(28, 30, 36, 0.84);
+      --glass-bg-strong: rgba(28, 30, 36, 0.95);
       --glass-border: rgba(255, 255, 255, 0.08);
       --glass-shadow:
         0 1px 2px rgba(0, 0, 0, 0.28),
         0 8px 20px -4px rgba(0, 0, 0, 0.36);
-      --well-bg: rgba(20, 22, 27, 0.78);
+      --well-bg: rgba(20, 22, 27, 0.82);
       --well-border: rgba(255, 255, 255, 0.06);
       --btn-bg: #23262e;
       --btn-border: rgba(255, 255, 255, 0.09);
@@ -56,13 +59,15 @@
       --ink-sub: #d4d4d8;
       --ink-muted: #9ca3af;
       --cobalt: #60a5fa;
-      --cobalt-soft: rgba(96, 165, 250, 0.13);
-      --indigo: #94a3b8;
-      --indigo-soft: rgba(148, 163, 184, 0.13);
+      --cobalt-soft: rgba(96, 165, 250, 0.14);
+      --slate: #94a3b8;
+      --slate-soft: rgba(148, 163, 184, 0.14);
       --coral: #f97316;
-      --coral-soft: rgba(249, 115, 22, 0.13);
+      --coral-soft: rgba(249, 115, 22, 0.14);
       --chart-grid: rgba(156, 163, 175, 0.16);
-      --dock-bg: rgba(18, 19, 22, 0.86);
+      --ring-track: rgba(255, 255, 255, 0.10);
+      --dock-bg: rgba(18, 19, 22, 0.88);
+      --backdrop-scrim: rgba(0, 0, 0, 0.56);
     }
 
     *, *::before, *::after {
@@ -89,13 +94,13 @@
     }
 
     /* =========================================================================
-       LAYOUT & SAFE-AREA SHELL
+       STICKY HEADER & SAFE-AREA LAYOUT
        ========================================================================= */
     .top-bar {
       position: sticky;
       top: 0;
       z-index: 40;
-      padding: calc(env(safe-area-inset-top, 12px) + 10px) 16px 10px 16px;
+      padding: calc(env(safe-area-inset-top, 12px) + 10px) 14px 10px 14px;
       background: var(--dock-bg);
       -webkit-backdrop-filter: blur(18px);
       backdrop-filter: blur(18px);
@@ -108,7 +113,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
+    }
+
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
     }
 
     .brand-title {
@@ -126,17 +138,39 @@
     .top-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
+    }
+
+    .days-trigger-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 10px;
+      min-height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--btn-border);
+      background: var(--btn-bg);
+      box-shadow: var(--btn-shadow);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .days-trigger-btn:active {
+      transform: scale(0.96);
     }
 
     .weight-chip {
-      padding: 6px 10px;
+      padding: 6px 9px;
       border-radius: 10px;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       font-size: 11px;
       font-weight: 600;
       color: var(--ink-sub);
+      white-space: nowrap;
     }
 
     .weight-chip strong {
@@ -156,12 +190,11 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.12s ease, opacity 0.15s ease;
+      flex-shrink: 0;
     }
 
     .icon-btn:active {
       transform: scale(0.95);
-      opacity: 0.85;
     }
 
     .main-wrap {
@@ -169,21 +202,113 @@
       z-index: 1;
       max-width: 540px;
       margin: 0 auto;
-      padding: 12px 14px calc(env(safe-area-inset-bottom, 16px) + 88px) 14px;
+      padding: 12px 14px calc(env(safe-area-inset-bottom, 16px) + 90px) 14px;
     }
 
-    .view-panel {
+    .tab-view {
       display: none;
       flex-direction: column;
       gap: 12px;
     }
 
-    .view-panel.active {
+    .tab-view.active {
       display: flex;
     }
 
     /* =========================================================================
-       CALM FROSTED PAPER / GRAPHITE CARDS & TACTILE CONTROLS
+       GOOGLE CALENDAR-STYLE SLIDE-OVER DAY DRAWER
+       ========================================================================= */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      background: var(--backdrop-scrim);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+
+    .drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: min(84vw, 330px);
+      z-index: 80;
+      background: var(--glass-bg-strong);
+      -webkit-backdrop-filter: blur(22px);
+      backdrop-filter: blur(22px);
+      border-right: 1px solid var(--glass-border);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.24);
+      padding: calc(env(safe-area-inset-top, 14px) + 14px) 14px calc(env(safe-area-inset-bottom, 16px) + 16px) 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      transform: translateX(-103%);
+      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .drawer-panel.open {
+      transform: translateX(0);
+    }
+
+    .drawer-day-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .drawer-day-item {
+      width: 100%;
+      text-align: left;
+      padding: 10px 11px;
+      border-radius: 12px;
+      border: 1px solid var(--btn-border);
+      background: var(--btn-bg);
+      color: var(--ink);
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .drawer-day-item:active {
+      transform: scale(0.985);
+    }
+
+    .drawer-day-item.is-selected {
+      border-color: var(--cobalt);
+      background: var(--cobalt-soft);
+    }
+
+    .drawer-day-code {
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      color: var(--cobalt);
+    }
+
+    .drawer-day-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 2px;
+      line-height: 1.25;
+    }
+
+    /* =========================================================================
+       FROSTED CARDS, WELLS & TACTILE BUTTONS
        ========================================================================= */
     .bento-card {
       background: var(--glass-bg);
@@ -201,6 +326,11 @@
       background: var(--glass-bg-strong);
     }
 
+    .comparison-card {
+      padding: 12px 14px;
+      border-left: 3px solid var(--cobalt);
+    }
+
     .neu-well {
       background: var(--well-bg);
       border: 1px solid var(--well-border);
@@ -215,12 +345,8 @@
       border-radius: 10px;
       font-family: inherit;
       cursor: pointer;
-      transition:
-        transform 0.12s ease,
-        background-color 0.15s ease,
-        color 0.15s ease,
-        border-color 0.15s ease;
       min-height: 36px;
+      transition: transform 0.12s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
 
     .neu-btn:active {
@@ -261,7 +387,7 @@
 
     .primary-cta:active {
       transform: scale(0.985);
-      opacity: 0.9;
+      opacity: 0.92;
     }
 
     .coral-cta {
@@ -273,7 +399,7 @@
     }
 
     /* =========================================================================
-       TYPOGRAPHY & FLEX/GRID UTILITIES
+       TYPOGRAPHY & LAYOUT UTILITIES
        ========================================================================= */
     .section-eyebrow {
       font-size: 10.5px;
@@ -314,7 +440,7 @@
     }
 
     .text-cobalt { color: var(--cobalt) !important; }
-    .text-indigo { color: var(--indigo) !important; }
+    .text-slate { color: var(--slate) !important; }
     .text-coral { color: var(--coral) !important; }
     .mt-2 { margin-top: 8px; }
     .mt-3 { margin-top: 12px; }
@@ -327,7 +453,6 @@
       border-radius: 999px;
       font-size: 11px;
       font-weight: 600;
-      border: 1px solid transparent;
     }
 
     .badge-cobalt {
@@ -335,9 +460,9 @@
       color: var(--cobalt);
     }
 
-    .badge-indigo {
-      background: var(--indigo-soft);
-      color: var(--indigo);
+    .badge-slate {
+      background: var(--slate-soft);
+      color: var(--slate);
     }
 
     .badge-coral {
@@ -346,23 +471,78 @@
     }
 
     /* =========================================================================
-       DAY SELECTOR & DYNAMIC MODE TRACKS
+       CIRCULAR PROGRESS RINGS (NUTRITION & RUNS)
        ========================================================================= */
-    .day-strip {
+    .rings-row {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 5px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
       margin-top: 10px;
     }
 
-    .day-pill {
-      padding: 7px 2px;
-      min-height: 42px;
-      font-size: 11.5px;
-      font-weight: 700;
+    .ring-tile {
+      padding: 10px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
     }
 
+    .ring-box {
+      position: relative;
+      width: 74px;
+      height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ring-svg {
+      width: 74px;
+      height: 74px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .ring-center-val {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .ring-center-unit {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      margin-top: 1px;
+    }
+
+    .ring-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 6px;
+    }
+
+    .ring-sub {
+      font-size: 10px;
+      color: var(--ink-muted);
+      margin-top: 1px;
+    }
+
+    /* =========================================================================
+       DYNAMIC MODE SWITCHERS & CHECKLIST
+       ========================================================================= */
     .track-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -386,9 +566,6 @@
       margin-top: 2px;
     }
 
-    /* =========================================================================
-       PROGRESS BARS & CHECKLIST ITEMS
-       ========================================================================= */
     .progress-track {
       width: 100%;
       height: 6px;
@@ -447,7 +624,6 @@
       cursor: pointer;
       margin-top: 1px;
       padding: 0;
-      transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.1s ease;
     }
 
     .check-box-btn:active {
@@ -501,8 +677,8 @@
     }
 
     .tag-pill.mvw {
-      background: var(--indigo-soft);
-      color: var(--indigo);
+      background: var(--slate-soft);
+      color: var(--slate);
     }
 
     .tag-pill.logged {
@@ -537,7 +713,7 @@
     }
 
     /* =========================================================================
-       FORMS, GRIDS & METRIC TILES
+       FORMS, GRIDS & METRIC BOXES
        ========================================================================= */
     .form-grid-2 {
       display: grid;
@@ -575,7 +751,6 @@
       font-size: 13px;
       font-weight: 500;
       outline: none;
-      transition: border-color 0.15s ease;
     }
 
     .field-input:focus, .field-select:focus {
@@ -608,9 +783,6 @@
       margin-top: 2px;
     }
 
-    /* =========================================================================
-       REST TIMER & MOBILITY TIMER
-       ========================================================================= */
     .timer-display {
       font-size: 26px;
       font-weight: 700;
@@ -625,9 +797,6 @@
       margin-top: 9px;
     }
 
-    /* =========================================================================
-       SLIDERS & ALERTS
-       ========================================================================= */
     .slider-row {
       padding: 9px 11px;
       margin-top: 8px;
@@ -652,9 +821,6 @@
       line-height: 1.4;
     }
 
-    /* =========================================================================
-       CHARTS & LOG LISTS
-       ========================================================================= */
     .chart-box {
       padding: 11px 10px 8px 10px;
       margin-top: 10px;
@@ -688,16 +854,32 @@
       gap: 4px;
     }
 
+    .filter-strip {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      margin-top: 10px;
+    }
+
+    .filter-pill {
+      padding: 5px 10px;
+      min-height: 30px;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
     /* =========================================================================
-       CLEAN BOTTOM TAB BAR
+       5-TAB BOTTOM NAVIGATION DOCK
        ========================================================================= */
-    .bottom-dock {
+    .bottom-nav {
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
       z-index: 45;
-      padding: 7px 12px calc(env(safe-area-inset-bottom, 10px) + 7px) 12px;
+      padding: 6px 10px calc(env(safe-area-inset-bottom, 10px) + 6px) 10px;
       background: var(--dock-bg);
       -webkit-backdrop-filter: blur(18px);
       backdrop-filter: blur(18px);
@@ -708,18 +890,18 @@
       max-width: 540px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 4px;
     }
 
-    .dock-tab {
+    .nav-btn {
       min-height: 46px;
       border: 1px solid transparent;
       border-radius: 12px;
       background: transparent;
       color: var(--ink-muted);
       font-family: inherit;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 600;
       display: flex;
       flex-direction: column;
@@ -727,14 +909,14 @@
       justify-content: center;
       gap: 3px;
       cursor: pointer;
-      transition: background-color 0.15s ease, color 0.15s ease;
+      padding: 4px 2px;
     }
 
-    .dock-tab:active {
+    .nav-btn:active {
       opacity: 0.75;
     }
 
-    .dock-tab.active {
+    .nav-btn.active {
       background: var(--cobalt-soft);
       color: var(--cobalt);
     }
@@ -744,7 +926,7 @@
       left: 50%;
       bottom: calc(env(safe-area-inset-bottom, 12px) + 72px);
       transform: translateX(-50%);
-      z-index: 60;
+      z-index: 90;
       padding: 8px 15px;
       border-radius: 999px;
       background: #1c1917;
@@ -773,12 +955,43 @@
 </head>
 <body>
 
+  <!-- GOOGLE CALENDAR-STYLE SLIDE-OVER DAY DRAWER -->
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+  <aside id="dayDrawer" class="drawer-panel" aria-label="Weekly Split Drawer">
+    <div class="row-between">
+      <div>
+        <div class="section-eyebrow text-cobalt">Schedule &amp; Split</div>
+        <h2 class="card-title" style="margin-top:2px;">Weekly Split</h2>
+      </div>
+      <button id="closeDrawerBtn" type="button" class="icon-btn" aria-label="Close Days Drawer">✕</button>
+    </div>
+
+    <div class="neu-well" style="padding:10px 11px;">
+      <div class="row-between">
+        <div>
+          <div style="font-size:12px;font-weight:700;">Minimum Viable Mode</div>
+          <div class="sub-text" style="font-size:11px;">Core lifts &amp; habits only on busy days</div>
+        </div>
+        <button id="drawerMvwBtn" type="button" class="neu-btn" style="padding:6px 10px;font-size:11px;font-weight:800;">OFF</button>
+      </div>
+    </div>
+
+    <div class="section-eyebrow">Select Day to View or Log</div>
+    <div id="drawerDayList" class="drawer-day-list"></div>
+  </aside>
+
   <!-- STICKY HEADER (NO SUBTITLE) -->
   <header class="top-bar">
     <div class="top-bar-inner">
-      <h1 class="brand-title">workout<span>OS</span></h1>
+      <div class="brand-left">
+        <button id="openDrawerBtn" type="button" class="days-trigger-btn" aria-label="Open Days Drawer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="headerDaysBtnLabel">Days</span>
+        </button>
+        <h1 class="brand-title">workout<span>OS</span></h1>
+      </div>
       <div class="top-actions">
-        <div class="weight-chip mono">7D Avg: <strong id="headerRollingWeight">240.0 lbs</strong></div>
+        <div class="weight-chip mono">7D: <strong id="headerRollingWeight">240.0 lbs</strong></div>
         <button id="themeToggleBtn" type="button" class="icon-btn" aria-label="Toggle Light or Dark Theme"></button>
       </div>
     </div>
@@ -787,41 +1000,28 @@
   <main class="main-wrap">
 
     <!-- ==================== TAB 1: TODAY ==================== -->
-    <section id="tab-today" class="view-panel active">
+    <section id="tab-today" class="tab-view active">
 
-      <!-- Live Current Calendar Date & Today's Scheduled Split Banner -->
+      <!-- Live Date & Active Split Header -->
       <div class="bento-card date-banner-card">
         <div class="row-wrap">
           <div style="min-width:0;flex:1;">
             <div class="section-eyebrow text-cobalt" id="liveCalendarDateText">TODAY</div>
-            <div id="liveTodaySplitText" style="font-size:13.5px;font-weight:800;color:var(--ink);margin-top:2px;line-height:1.35;">Today's Split: Upper A</div>
+            <h2 id="dayTitleText" class="card-title" style="margin-top:3px;font-size:16.5px;">Upper A — Bench, Pull, Shoulders &amp; Core</h2>
+            <p id="daySubtitleText" class="sub-text">Shoulder-friendly pressing (225×4 baseline), 2:1 pull-to-push ratio &amp; core stability</p>
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-            <button id="jumpToTodayBtn" type="button" class="neu-btn hidden" style="padding:7px 10px;font-size:11px;font-weight:700;color:var(--cobalt);">Back to Today</button>
-            <button id="saveSnapshotBtn" type="button" class="neu-btn" style="padding:7px 10px;font-size:11px;font-weight:700;color:var(--indigo);">Save Snapshot</button>
+            <button id="jumpToTodayBtn" type="button" class="neu-btn hidden" style="padding:7px 10px;font-size:11px;font-weight:700;color:var(--cobalt);">Today</button>
+            <button id="saveSnapshotBtn" type="button" class="neu-btn" style="padding:7px 10px;font-size:11px;font-weight:700;color:var(--slate);">Save Day</button>
           </div>
         </div>
-      </div>
 
-      <!-- 7-Day Schedule & Dynamic Track Switcher -->
-      <div class="bento-card">
-        <div class="row-between">
-          <span class="section-eyebrow">Weekly Schedule</span>
-          <button id="mvwToggleBtn" type="button" class="neu-btn" style="padding:6px 10px;font-size:11px;font-weight:700;">Min Viable Mode: OFF</button>
+        <div class="row-between mt-3">
+          <span id="dayFocusBadge" class="badge-soft badge-cobalt">MON · 55–65 MIN</span>
+          <span id="dayCompletionText" class="mono" style="font-size:11.5px;font-weight:800;color:var(--cobalt);">0 / 0 Done</span>
         </div>
-
-        <div id="daySelectorRow" class="day-strip"></div>
-
-        <div class="mt-3">
-          <div class="row-between">
-            <span id="dayFocusBadge" class="badge-soft badge-cobalt">MON · 55–65 MIN</span>
-            <span id="dayCompletionText" class="mono" style="font-size:11.5px;font-weight:800;color:var(--cobalt);">0 / 0 Done</span>
-          </div>
-          <h2 id="dayTitleText" class="card-title" style="margin-top:7px;font-size:18px;">Upper A — Bench, Pull, Shoulders &amp; Core</h2>
-          <p id="daySubtitleText" class="sub-text">Shoulder-friendly pressing (225×4 baseline), 2:1 pull-to-push ratio &amp; core stability</p>
-          <div class="progress-track">
-            <div id="dayProgressFill" class="progress-fill" style="width:0%;"></div>
-          </div>
+        <div class="progress-track">
+          <div id="dayProgressFill" class="progress-fill" style="width:0%;"></div>
         </div>
 
         <!-- Dynamic Mode Switcher (Tuesday & Saturday) -->
@@ -829,6 +1029,15 @@
           <span class="section-eyebrow text-coral" id="dynamicTrackLabel">Dynamic Session Mode</span>
           <div id="dynamicTrackButtons" class="track-grid"></div>
         </div>
+      </div>
+
+      <!-- Same-Split Comparison Card Up Front (+ Yesterday Recap Pill) -->
+      <div id="sameSplitComparisonCard" class="bento-card comparison-card">
+        <div class="row-wrap">
+          <span id="sameSplitEyebrow" class="section-eyebrow text-cobalt">Last MON Session</span>
+          <span id="yesterdayRecapBadge" class="badge-soft badge-slate mono hidden">Yesterday: --</span>
+        </div>
+        <div id="sameSplitSummaryBody" style="font-size:12px;color:var(--ink-sub);margin-top:5px;line-height:1.45;"></div>
       </div>
 
       <!-- Synced 2:00 Inter-Set Rest Timer -->
@@ -856,7 +1065,7 @@
         <div class="row-wrap">
           <div>
             <h3 class="card-title">Session Checklist</h3>
-            <p class="sub-text">Tap box to complete · Tap <strong>Log Set</strong> to record weight &amp; reps</p>
+            <p class="sub-text">Check off drills · Tap <strong>Log Set</strong> to record weight &amp; reps</p>
           </div>
           <div style="display:flex;gap:6px;">
             <button id="toggleCustomDrawerBtn" type="button" class="neu-btn" style="padding:6px 10px;font-size:11px;font-weight:800;color:var(--cobalt);">+ Custom</button>
@@ -894,7 +1103,7 @@
       <div id="postCardioCard" class="bento-card hidden">
         <div class="row-between">
           <div>
-            <span class="section-eyebrow text-indigo">Optional Finisher</span>
+            <span class="section-eyebrow text-slate">Optional Finisher</span>
             <h3 class="card-title" style="margin-top:2px;">Post-Lift Low-Impact Cardio</h3>
             <p class="sub-text">10–20 min easy Zone 2 if joints and energy feel good</p>
           </div>
@@ -953,24 +1162,43 @@
         <div id="jointAlertBanner" class="alert-box hidden"></div>
       </div>
 
-      <!-- Date-Keyed Daily Snapshots History -->
+      <!-- 10-Minute Morning Joint Brush Timer & Checklist -->
       <div class="bento-card">
-        <div class="row-wrap">
+        <div class="row-between">
           <div>
-            <h3 class="card-title">Saved Daily Snapshots</h3>
-            <p id="snapshotStatusSub" class="sub-text">Auto-saved by calendar date (YYYY-MM-DD)</p>
+            <span class="section-eyebrow text-cobalt">Daily Longevity Ritual</span>
+            <h3 class="card-title" style="margin-top:2px;">10-Min Morning Joint Brush</h3>
+            <p class="sub-text">Taekwondo-inspired T-spine, shoulder, hip &amp; ankle flow</p>
           </div>
-          <span id="snapshotCountBadge" class="badge-soft badge-indigo">0 Days</span>
+          <span id="mobilityStreakBadge" class="badge-soft badge-cobalt mono">0/7 Days</span>
         </div>
-        <div id="dailySnapshotsList" class="log-list"></div>
+
+        <div class="neu-well" style="padding:13px;margin-top:10px;text-align:center;">
+          <div id="mobDrillStepLabel" class="section-eyebrow text-slate">DRILL 1 OF 5</div>
+          <div id="mobDrillTitle" style="font-size:15px;font-weight:800;margin-top:3px;">Thoracic Open-Book Rotations</div>
+          <div id="mobDrillCue" class="sub-text" style="margin-top:3px;">Side-lying with knees stacked &amp; pinned; rotate upper back only (90s/side).</div>
+          <div id="mobTimerClock" class="timer-display mono" style="font-size:32px;margin-top:7px;">03:00</div>
+          <div class="progress-track">
+            <div id="mobTimerBar" class="progress-fill" style="width:100%;"></div>
+          </div>
+
+          <div class="form-grid-3 mt-3">
+            <button id="mobStartPauseBtn" type="button" class="neu-btn active-btn" style="font-size:12px;font-weight:800;">Start Flow</button>
+            <button id="mobNextDrillBtn" type="button" class="neu-btn" style="font-size:12px;font-weight:700;">Next Drill</button>
+            <button id="mobResetBtn" type="button" class="neu-btn" style="font-size:12px;font-weight:700;">Reset</button>
+          </div>
+        </div>
+
+        <div id="mobilityDrillsList" class="checklist-stack"></div>
+        <button id="completeMobilityTodayBtn" type="button" class="primary-cta mt-3">Mark Joint Brush Complete</button>
       </div>
 
     </section>
 
-    <!-- ==================== TAB 2: STRENGTH & RUNS ==================== -->
-    <section id="tab-performance" class="view-panel">
+    <!-- ==================== TAB 2: STRENGTH ==================== -->
+    <section id="tab-strength" class="tab-view">
 
-      <!-- Synced 2:00 Rest Timer on Strength Tab -->
+      <!-- Synced 2:00 Rest Timer -->
       <div class="bento-card">
         <div class="row-between">
           <div>
@@ -1014,7 +1242,7 @@
           <div class="neu-well metric-box">
             <div class="metric-label">Deadlift</div>
             <div id="deadliftBestSet" class="metric-val mono">315 × 5</div>
-            <div id="deadlift1RM" class="metric-sub mono text-indigo">1RM: 368</div>
+            <div id="deadlift1RM" class="metric-sub mono text-slate">1RM: 368</div>
           </div>
         </div>
 
@@ -1024,7 +1252,7 @@
             <span style="font-size:10.5px;font-weight:700;">
               <span class="text-cobalt">● Bench</span> &nbsp;
               <span class="text-coral">● Squat</span> &nbsp;
-              <span class="text-indigo">● Deadlift</span>
+              <span class="text-slate">● Deadlift</span>
             </span>
           </div>
           <div id="strengthChartContainer" class="svg-wrap"></div>
@@ -1072,10 +1300,10 @@
         </div>
       </div>
 
-      <!-- Full Exercise Logger (Main, Accessory, Core & Custom) -->
+      <!-- Full Exercise Logger -->
       <div class="bento-card">
-        <h3 class="card-title">Log Working Set (All Exercises)</h3>
-        <p class="sub-text">Track main lifts, shoulder/trap/forearm accessories, core &amp; custom moves</p>
+        <h3 class="card-title">Log Working Set</h3>
+        <p class="sub-text">Main lifts, shoulder/trap/forearm accessories, core &amp; custom moves</p>
 
         <div class="mt-2">
           <label class="field-label" for="liftSelect">Exercise</label>
@@ -1109,42 +1337,47 @@
         <div id="strengthLogsList" class="log-list"></div>
       </div>
 
-      <!-- Hybrid Engine & Pace Goals (7:00 Mile & 23:00 5K) -->
+    </section>
+
+    <!-- ==================== TAB 3: DEDICATED RUNS TAB ==================== -->
+    <section id="tab-runs" class="tab-view">
+
+      <!-- Goal Progress Rings & Benchmarks (7:00 Mile & 23:00 5K) -->
       <div class="bento-card">
         <div class="row-between">
           <div>
-            <h3 class="card-title">Hybrid Engine &amp; Pace Goals</h3>
-            <p class="sub-text">Target: 7:00 Mile &amp; 23:00 5K (7:24/mi)</p>
+            <span class="section-eyebrow text-coral">Hybrid Engine</span>
+            <h3 class="card-title" style="margin-top:2px;">7:00 Mile &amp; 23:00 5K Targets</h3>
+            <p class="sub-text">Target pace: 7:00/mi mile · 7:24/mi 5K</p>
           </div>
           <span id="bestPaceBadge" class="badge-soft badge-coral mono">Best: 9:40/mi</span>
         </div>
 
-        <div class="neu-well" style="padding:10px 12px;margin-top:10px;">
-          <div class="row-between">
-            <span style="font-size:11.5px;font-weight:700;">7:00 Mile Goal</span>
-            <span id="mileGoalText" class="mono text-cobalt" style="font-size:11.5px;font-weight:800;">9:40 /mi</span>
-          </div>
-          <div class="progress-track">
-            <div id="mileGoalFill" class="progress-fill" style="width:45%;"></div>
-          </div>
+        <div class="rings-row" id="runRingsRow"></div>
 
-          <div class="row-between mt-3">
-            <span style="font-size:11.5px;font-weight:700;">23:00 5K Goal</span>
-            <span id="fiveKGoalText" class="mono text-coral" style="font-size:11.5px;font-weight:800;">Est 30:02</span>
+        <div class="neu-well chart-box">
+          <div class="row-between">
+            <span class="metric-label">Pace Trend (/mi — Lower is Faster)</span>
+            <span class="mono text-coral" style="font-size:10.5px;font-weight:700;">Goal: 7:00/mi</span>
           </div>
-          <div class="progress-track">
-            <div id="fiveKGoalFill" class="progress-fill progress-fill-coral" style="width:50%;"></div>
-          </div>
+          <div id="runPaceChartContainer" class="svg-wrap"></div>
         </div>
+      </div>
+
+      <!-- Log Run Form -->
+      <div class="bento-card">
+        <h3 class="card-title">Log Run or Conditioning Session</h3>
+        <p class="sub-text">Enter distance in miles and duration as mm:ss</p>
 
         <div class="form-grid-3">
           <div>
             <label class="field-label" for="runTypeInput">Session</label>
             <select id="runTypeInput" class="field-select">
-              <option value="Zone 2 Base">Zone 2 Base</option>
+              <option value="Zone 2 Base Run">Zone 2 Base</option>
               <option value="Threshold Intervals">Threshold</option>
-              <option value="1-Mile Trial">1-Mile Trial</option>
-              <option value="5K Trial">5K Trial</option>
+              <option value="1-Mile Time Trial">1-Mile Trial</option>
+              <option value="5K Time Trial">5K Trial</option>
+              <option value="Fallback Engine">Fallback Engine</option>
             </select>
           </div>
           <div>
@@ -1163,15 +1396,15 @@
 
     </section>
 
-    <!-- ==================== TAB 3: NUTRITION & RECOMP ==================== -->
-    <section id="tab-nutrition" class="view-panel">
+    <!-- ==================== TAB 4: FUEL (NUTRITION & WEIGHT) ==================== -->
+    <section id="tab-fuel" class="tab-view">
 
-      <!-- Weekly Calorie Bank (15,750 kcal/wk) -->
+      <!-- Compressed Circular Macro & Balance Rings Card -->
       <div class="bento-card">
         <div class="row-wrap">
           <div>
-            <h3 class="card-title">Weekly Calorie Bank</h3>
-            <p class="sub-text">15,750 kcal/wk · 240 → 200–210 lbs recomp</p>
+            <h3 class="card-title">Daily Fuel &amp; Balance (<span id="nutriActiveDayLabel">TUE</span>)</h3>
+            <p class="sub-text">15,750 kcal/wk bank · 185g protein anchor</p>
           </div>
           <div style="display:flex;gap:5px;">
             <button id="modeFlexBtn" type="button" class="neu-btn active-btn" style="padding:6px 9px;font-size:11px;font-weight:700;">Weekend Flex</button>
@@ -1179,23 +1412,21 @@
           </div>
         </div>
 
-        <div class="form-grid-2">
-          <div class="neu-well metric-box">
-            <div class="metric-label">Weekly Bank Used</div>
-            <div id="weeklyKcalUsed" class="metric-val mono text-cobalt">0 kcal</div>
-            <div id="weeklyKcalRemain" class="metric-sub mono" style="color:var(--ink-muted);">15,750 left</div>
+        <!-- 3 Circular Progress Rings: Calories, Protein, Daily Balance -->
+        <div class="rings-row" id="fuelRingsRow"></div>
+
+        <!-- Compact 7-Day Calorie Bank Pill -->
+        <div class="neu-well" style="padding:9px 11px;margin-top:10px;">
+          <div class="row-between">
+            <span style="font-size:11.5px;font-weight:700;">7-Day Calorie Bank</span>
+            <span id="weeklyBankSummaryText" class="mono text-cobalt" style="font-size:11.5px;font-weight:800;">0 / 15,750 kcal</span>
           </div>
-          <div class="neu-well metric-box">
-            <div class="metric-label"><span id="nutriActiveDayLabel">MON</span> Target</div>
-            <div id="dailyKcalTarget" class="metric-val mono">2,100 kcal</div>
-            <div class="metric-sub mono text-coral">185g Protein Anchor</div>
+          <div class="progress-track">
+            <div id="weeklyKcalFill" class="progress-fill" style="width:0%;"></div>
           </div>
         </div>
 
-        <div class="progress-track">
-          <div id="weeklyKcalFill" class="progress-fill" style="width:0%;"></div>
-        </div>
-
+        <!-- Quick Meal / Macro Adder (+ Add to Day) & Direct Edit -->
         <div class="form-grid-2 mt-3">
           <div>
             <label class="field-label" for="inputKcal">Calories (kcal)</label>
@@ -1215,29 +1446,32 @@
           </div>
         </div>
 
-        <button id="saveNutritionBtn" type="button" class="primary-cta mt-2">Save Day's Macros</button>
+        <div class="form-grid-2">
+          <button id="addMealMacrosBtn" type="button" class="neu-btn" style="min-height:44px;font-size:12.5px;font-weight:800;color:var(--cobalt);">+ Add Meal to Day</button>
+          <button id="saveNutritionBtn" type="button" class="primary-cta">Set Day Total</button>
+        </div>
       </div>
 
       <!-- Daily Recomp Habit Anchors -->
       <div class="bento-card">
-        <h3 class="card-title">Daily Habit Anchors (<span id="habitDayLabel">MON</span>)</h3>
-        <p class="sub-text">Keep saturation, hydration, steps &amp; daily mobility locked in</p>
+        <h3 class="card-title">Daily Habit Anchors (<span id="habitDayLabel">TUE</span>)</h3>
+        <p class="sub-text">Maintain creatine saturation, hydration, steps &amp; mobility</p>
         <div class="form-grid-2">
           <button type="button" data-habit="creatine" id="habitCreatineBtn" class="neu-btn" style="padding:10px;font-size:12px;font-weight:700;">5g Creatine</button>
-          <button type="button" data-habit="water" id="habitWaterBtn" class="neu-btn" style="padding:10px;font-size:12px;font-weight:700;">3.5–4L Water</button>
+          <button type="button" data-habit="water" id="habitWaterBtn" class="neu-btn" style="padding:10px;font-size:12px;font-weight:700;">4.0L Water</button>
           <button type="button" data-habit="steps" id="habitStepsBtn" class="neu-btn" style="padding:10px;font-size:12px;font-weight:700;">8k–10k Steps</button>
           <button type="button" data-habit="jointBrush" id="habitJointBtn" class="neu-btn" style="padding:10px;font-size:12px;font-weight:700;">10m Joint Brush</button>
         </div>
       </div>
 
-      <!-- Scale Weight & 7-Day Rolling Trend + CSV/JSON Export -->
+      <!-- Body Recomp Weight Trend -->
       <div class="bento-card">
         <div class="row-between">
           <div>
             <h3 class="card-title">Body Recomp Trend</h3>
             <p class="sub-text">240 lbs → 200–210 lbs (20–22% BF target)</p>
           </div>
-          <span id="weightDeltaBadge" class="badge-soft badge-indigo mono">0.0 lbs</span>
+          <span id="weightDeltaBadge" class="badge-soft badge-slate mono">0.0 lbs</span>
         </div>
 
         <div class="form-grid-2">
@@ -1257,90 +1491,77 @@
           </div>
           <div id="weightChartContainer" class="svg-wrap"></div>
         </div>
-
-        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--well-border);">
-          <div class="section-eyebrow">Data Export &amp; Backup</div>
-          <div class="form-grid-2">
-            <button id="exportCsvBtn" type="button" class="primary-cta" style="padding:10px 8px;font-size:12px;">Export CSV Spreadsheet</button>
-            <button id="exportJsonBtn" type="button" class="neu-btn" style="padding:10px 8px;font-size:12px;font-weight:700;">Copy JSON Backup</button>
-          </div>
-          <div class="form-grid-2">
-            <button id="toggleImportBtn" type="button" class="neu-btn" style="padding:10px 8px;font-size:11.5px;font-weight:700;">Import JSON</button>
-            <button id="resetAllBtn" type="button" class="neu-btn text-coral" style="padding:10px 8px;font-size:11.5px;font-weight:700;">Reset Data</button>
-          </div>
-          <div id="importBox" class="hidden mt-2">
-            <textarea id="importTextarea" rows="3" placeholder="Paste exported JSON backup here..." class="field-input mono" style="font-size:11.5px;"></textarea>
-            <button id="confirmImportBtn" type="button" class="primary-cta mt-2">Apply Restored Backup</button>
-          </div>
-        </div>
       </div>
 
     </section>
 
-    <!-- ==================== TAB 4: MOBILITY & LONGEVITY ==================== -->
-    <section id="tab-mobility" class="view-panel">
+    <!-- ==================== TAB 5: DEDICATED HISTORY TAB ==================== -->
+    <section id="tab-history" class="tab-view">
 
-      <!-- 10-Minute Morning Joint Brush Timer -->
+      <!-- Snapshot Archive & Day Filter -->
       <div class="bento-card">
-        <div class="row-between">
+        <div class="row-wrap">
           <div>
-            <span class="section-eyebrow text-cobalt">Daily Longevity Ritual</span>
-            <h3 class="card-title" style="margin-top:2px;">10-Min Morning Joint Brush</h3>
-            <p class="sub-text">Taekwondo-inspired T-spine, shoulder, hip &amp; ankle flow</p>
+            <h3 class="card-title">Saved Daily Snapshots</h3>
+            <p id="snapshotStatusSub" class="sub-text">Date-keyed archive (YYYY-MM-DD) for plotting &amp; export</p>
           </div>
-          <span id="mobilityStreakBadge" class="badge-soft badge-cobalt mono">0/7 Days</span>
-        </div>
-
-        <div class="neu-well" style="padding:14px;margin-top:12px;text-align:center;">
-          <div id="mobDrillStepLabel" class="section-eyebrow text-indigo">DRILL 1 OF 5</div>
-          <div id="mobDrillTitle" style="font-size:16px;font-weight:800;margin-top:4px;">Thoracic Open-Book Rotations</div>
-          <div id="mobDrillCue" class="sub-text" style="margin-top:3px;">Kneeling/side-lying with knees pinned; rotate upper back only (90s/side).</div>
-          <div id="mobTimerClock" class="timer-display mono" style="font-size:34px;margin-top:8px;">03:00</div>
-          <div class="progress-track">
-            <div id="mobTimerBar" class="progress-fill" style="width:100%;"></div>
-          </div>
-
-          <div class="form-grid-3 mt-3">
-            <button id="mobStartPauseBtn" type="button" class="neu-btn active-btn" style="font-size:12px;font-weight:800;">Start Flow</button>
-            <button id="mobNextDrillBtn" type="button" class="neu-btn" style="font-size:12px;font-weight:700;">Next Drill</button>
-            <button id="mobResetBtn" type="button" class="neu-btn" style="font-size:12px;font-weight:700;">Reset</button>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span id="snapshotCountBadge" class="badge-soft badge-slate mono">0 Days</span>
+            <button id="historySaveTodayBtn" type="button" class="neu-btn" style="padding:6px 10px;font-size:11px;font-weight:800;color:var(--cobalt);">Save Today</button>
           </div>
         </div>
 
-        <div id="mobilityDrillsList" class="checklist-stack"></div>
-
-        <button id="completeMobilityTodayBtn" type="button" class="primary-cta mt-3">Mark Today's Joint Brush Complete</button>
+        <div id="historyFilterStrip" class="filter-strip"></div>
+        <div id="dailySnapshotsList" class="log-list"></div>
       </div>
 
-      <!-- 7-Day Mobility Consistency Strip -->
+      <!-- CSV Spreadsheet & JSON Backup / Restore -->
       <div class="bento-card">
-        <h3 class="card-title">7-Day Joint Brush Consistency</h3>
-        <p class="sub-text">Tap a day to toggle completion</p>
-        <div id="mobilityWeekStrip" class="day-strip"></div>
+        <h3 class="card-title">Spreadsheet Export &amp; Backup</h3>
+        <p class="sub-text">Export flat CSV for Excel/Numbers or back up your JSON state</p>
+
+        <div class="form-grid-2">
+          <button id="exportCsvBtn" type="button" class="primary-cta" style="padding:10px 8px;font-size:12px;">Export CSV Spreadsheet</button>
+          <button id="exportJsonBtn" type="button" class="neu-btn" style="padding:10px 8px;font-size:12px;font-weight:700;">Copy JSON Backup</button>
+        </div>
+
+        <div class="form-grid-2">
+          <button id="toggleImportBtn" type="button" class="neu-btn" style="padding:10px 8px;font-size:11.5px;font-weight:700;">Import JSON</button>
+          <button id="resetAllBtn" type="button" class="neu-btn text-coral" style="padding:10px 8px;font-size:11.5px;font-weight:700;">Reset Data</button>
+        </div>
+
+        <div id="importBox" class="hidden mt-2">
+          <textarea id="importTextarea" rows="3" placeholder="Paste exported JSON backup here..." class="field-input mono" style="font-size:11.5px;"></textarea>
+          <button id="confirmImportBtn" type="button" class="primary-cta mt-2">Apply Restored Backup</button>
+        </div>
       </div>
 
     </section>
 
   </main>
 
-  <!-- FLOATING FROSTED BOTTOM NAVIGATION DOCK -->
-  <nav class="bottom-dock" aria-label="Primary Navigation">
+  <!-- 5-TAB BOTTOM NAVIGATION DOCK: TODAY · STRENGTH · RUNS · FUEL · HISTORY -->
+  <nav class="bottom-nav" aria-label="Primary Navigation">
     <div class="dock-inner">
-      <button type="button" data-tab="today" class="dock-tab active">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <button type="button" data-tab="today" class="nav-btn active">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
         <span>Today</span>
       </button>
-      <button type="button" data-tab="performance" class="dock-tab">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M3 10v4"/><path d="M21 10v4"/><path d="M6.5 4v16"/><path d="M17.5 4v16"/></svg>
+      <button type="button" data-tab="strength" class="nav-btn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M3 10v4"/><path d="M21 10v4"/><path d="M6.5 4v16"/><path d="M17.5 4v16"/></svg>
         <span>Strength</span>
       </button>
-      <button type="button" data-tab="nutrition" class="dock-tab">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
-        <span>Nutrition</span>
+      <button type="button" data-tab="runs" class="nav-btn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M7 21l3 -4"/><path d="M16 21l-2 -4l-3 -3l1 -6"/><path d="M6 12l2 -3l4 -1l3 3l3 1"/></svg>
+        <span>Runs</span>
       </button>
-      <button type="button" data-tab="mobility" class="dock-tab">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-        <span>Mobility</span>
+      <button type="button" data-tab="fuel" class="nav-btn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M21.2 8A10 10 0 0 0 16 2.8V8h5.2z"/></svg>
+        <span>Fuel</span>
+      </button>
+      <button type="button" data-tab="history" class="nav-btn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+        <span>History</span>
       </button>
     </div>
   </nav>
@@ -1367,7 +1588,7 @@
         try {
           window.localStorage.setItem(key, value);
         } catch (e) {
-          // Fallback already stored in memoryStore
+          // Fallback already saved in memoryStore
         }
       }
 
@@ -1667,8 +1888,32 @@
         }
       }
 
+      function renderCircularRing(opts) {
+        var pct = Math.max(0, Math.min(100, Number(opts.pct) || 0));
+        var r = 30;
+        var circ = 2 * Math.PI * r;
+        var offset = circ * (1 - pct / 100);
+        var strokeColor = opts.color || 'var(--cobalt)';
+        return (
+          '<div class="neu-well ring-tile">' +
+            '<div class="ring-box">' +
+              '<svg class="ring-svg" viewBox="0 0 74 74">' +
+                '<circle cx="37" cy="37" r="' + r + '" fill="none" stroke="var(--ring-track)" stroke-width="6.5" />' +
+                '<circle cx="37" cy="37" r="' + r + '" fill="none" stroke="' + strokeColor + '" stroke-width="6.5" stroke-linecap="round" stroke-dasharray="' + circ.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '" />' +
+              '</svg>' +
+              '<div class="ring-center">' +
+                '<span class="ring-center-val mono">' + escapeHtml(opts.centerVal) + '</span>' +
+                (opts.centerUnit ? '<span class="ring-center-unit">' + escapeHtml(opts.centerUnit) + '</span>' : '') +
+              '</div>' +
+            '</div>' +
+            '<div class="ring-label">' + escapeHtml(opts.label) + '</div>' +
+            '<div class="ring-sub mono">' + escapeHtml(opts.sub) + '</div>' +
+          '</div>'
+        );
+      }
+
       // =========================================================================
-      // 5. APPLICATION STATE & PERSISTENCE
+      // 5. APPLICATION STATE & PERSISTENCE (workoutOS_v1)
       // =========================================================================
       var STORAGE_KEY = 'workoutOS_v1';
 
@@ -1693,6 +1938,7 @@
           selectedExerciseKey: 'bench',
           explorerExerciseKey: 'bench',
           explorerMetric: 'weight',
+          historyFilterDay: 'ALL',
           completedItems: {},
           customExercisesByDay: customEx,
           postCardio: {
@@ -1707,7 +1953,7 @@
             { id: 3, lift: 'deadlift', sets: 3, weight: 315, reps: 5, note: '2 RIR', date: 'Baseline', isoDate: '' }
           ],
           runLogs: [
-            { id: 1, type: 'Zone 2 Base', dist: 3.0, seconds: 1740, date: 'Baseline', isoDate: '' }
+            { id: 1, type: 'Zone 2 Base Run', dist: 3.0, seconds: 1740, date: 'Baseline', isoDate: '' }
           ],
           nutritionByDay: nutri,
           habitsByDay: habits,
@@ -1764,6 +2010,7 @@
             selectedExerciseKey: p.selectedExerciseKey || 'bench',
             explorerExerciseKey: p.explorerExerciseKey || p.selectedExerciseKey || 'bench',
             explorerMetric: p.explorerMetric === '1rm' ? '1rm' : 'weight',
+            historyFilterDay: p.historyFilterDay || 'ALL',
             completedItems: p.completedItems && typeof p.completedItems === 'object' ? p.completedItems : {},
             customExercisesByDay: mergedCustom,
             postCardio: mergedPostCardio,
@@ -1863,7 +2110,53 @@
       }
 
       // =========================================================================
-      // 7. DATE-KEYED DAILY SNAPSHOTS (YYYY-MM-DD)
+      // 7. SLIDE-OVER DAY DRAWER (GOOGLE CALENDAR STYLE)
+      // =========================================================================
+      function openDayDrawer() {
+        renderDayDrawer();
+        document.getElementById('dayDrawer').classList.add('open');
+        document.getElementById('drawerBackdrop').classList.add('open');
+      }
+
+      function closeDayDrawer() {
+        document.getElementById('dayDrawer').classList.remove('open');
+        document.getElementById('drawerBackdrop').classList.remove('open');
+      }
+
+      function renderDayDrawer() {
+        var realTodayKey = getTodayDayKey(new Date());
+        var selected = appState.selectedDay;
+
+        var mvwBtn = document.getElementById('drawerMvwBtn');
+        mvwBtn.textContent = appState.mvwMode ? 'ON' : 'OFF';
+        mvwBtn.classList.toggle('active-btn', appState.mvwMode);
+
+        var listEl = document.getElementById('drawerDayList');
+        listEl.innerHTML = DAYS_ORDER.map(function (dKey) {
+          var sess = getActiveDaySession(dKey);
+          var vis = appState.mvwMode ? sess.items.filter(function (it) { return it.mvw; }) : sess.items;
+          var done = 0;
+          vis.forEach(function (it) { if (appState.completedItems[it.id]) done += 1; });
+          var isSel = dKey === selected;
+          var isToday = dKey === realTodayKey;
+
+          return (
+            '<button type="button" data-drawer-day="' + dKey + '" class="drawer-day-item' + (isSel ? ' is-selected' : '') + '">' +
+              '<div style="min-width:0;flex:1;">' +
+                '<div style="display:flex;align-items:center;gap:6px;">' +
+                  '<span class="drawer-day-code mono">' + dKey.toUpperCase() + '</span>' +
+                  (isToday ? '<span class="badge-soft badge-cobalt" style="padding:1px 6px;font-size:9.5px;">TODAY</span>' : '') +
+                '</div>' +
+                '<div class="drawer-day-title">' + escapeHtml(sess.title) + '</div>' +
+              '</div>' +
+              '<span class="mono" style="font-size:11px;font-weight:700;color:var(--ink-muted);flex-shrink:0;">' + done + '/' + vis.length + '</span>' +
+            '</button>'
+          );
+        }).join('');
+      }
+
+      // =========================================================================
+      // 8. DATE-KEYED DAILY SNAPSHOTS & SAME-SPLIT COMPARISON HELPERS
       // =========================================================================
       function upsertTodaySnapshot(manualSave) {
         var now = new Date();
@@ -1959,61 +2252,94 @@
 
         saveState();
         if (manualSave) {
-          renderSnapshotsList();
+          renderHistoryTab();
           showToast('Saved snapshot for ' + iso);
         }
       }
 
-      function renderSnapshotsList() {
-        var listEl = document.getElementById('dailySnapshotsList');
-        var badgeEl = document.getElementById('snapshotCountBadge');
-        var subEl = document.getElementById('snapshotStatusSub');
-        if (!listEl) return;
-
+      function findPreviousSameDaySnapshot(dayKey, todayIso) {
         var snaps = appState.dailySnapshots || [];
-        if (badgeEl) badgeEl.textContent = snaps.length + (snaps.length === 1 ? ' Day' : ' Days');
+        for (var i = snaps.length - 1; i >= 0; i--) {
+          if (snaps[i].day === dayKey && snaps[i].date !== todayIso) {
+            return snaps[i];
+          }
+        }
+        return null;
+      }
 
-        if (!snaps.length) {
-          listEl.innerHTML = '<div class="neu-well log-row"><span class="sub-text">No archived days yet. Tap <strong>Save Snapshot</strong> above to archive today\'s log.</span></div>';
+      function findYesterdaySnapshot() {
+        var yest = new Date();
+        yest.setDate(yest.getDate() - 1);
+        var yestIso = getLocalIsoDate(yest);
+        var snaps = appState.dailySnapshots || [];
+        for (var i = snaps.length - 1; i >= 0; i--) {
+          if (snaps[i].date === yestIso) return snaps[i];
+        }
+        return null;
+      }
+
+      function renderSameSplitComparisonCard() {
+        var day = appState.selectedDay;
+        var todayIso = getLocalIsoDate(new Date());
+        var prevSame = findPreviousSameDaySnapshot(day, todayIso);
+        var yestSnap = findYesterdaySnapshot();
+
+        document.getElementById('sameSplitEyebrow').textContent = 'Last ' + day.toUpperCase() + ' Session';
+
+        var yestBadge = document.getElementById('yesterdayRecapBadge');
+        if (yestSnap) {
+          yestBadge.classList.remove('hidden');
+          yestBadge.textContent = 'Yesterday (' + yestSnap.day + '): ' + yestSnap.completionPct + '% · ' + yestSnap.protein + 'g Pro';
+        } else {
+          yestBadge.classList.add('hidden');
+        }
+
+        var bodyEl = document.getElementById('sameSplitSummaryBody');
+        if (prevSame) {
+          var itemsSummary = [];
+          if (prevSame.exercises && prevSame.exercises.length) {
+            prevSame.exercises.forEach(function (ex) {
+              itemsSummary.push('<strong>' + escapeHtml(ex.name) + '</strong> ' + ex.sets + '×' + ex.weight + '×' + ex.reps);
+            });
+          }
+          if (prevSame.runs && prevSame.runs.length) {
+            prevSame.runs.forEach(function (rn) {
+              itemsSummary.push('<strong>' + escapeHtml(rn.type) + '</strong> ' + rn.miles + ' mi @ ' + escapeHtml(rn.pace) + '/mi');
+            });
+          }
+          var detailStr = itemsSummary.length
+            ? itemsSummary.slice(0, 4).join(' · ')
+            : 'Completed ' + prevSame.completionPct + '% of checklist (' + prevSame.calories + ' kcal, ' + prevSame.protein + 'g protein)';
+          bodyEl.innerHTML = '<span class="mono text-cobalt" style="font-weight:700;">' + escapeHtml(prevSame.date) + ':</span> ' + detailStr;
           return;
         }
 
-        var latest = snaps[snaps.length - 1];
-        if (subEl && latest.updatedAt) {
-          subEl.textContent = 'Last archived: ' + latest.date + ' at ' + latest.updatedAt;
+        // Baseline target fallback before a prior week's snapshot is logged
+        var session = getActiveDaySession(day);
+        var baselineTargets = [];
+        session.items.forEach(function (it) {
+          if (it.exerciseKey) {
+            var latest = getLatestLogForExercise(it.exerciseKey);
+            var meta = getExerciseMeta(it.exerciseKey);
+            if (latest) {
+              baselineTargets.push('<strong>' + escapeHtml(meta.name) + '</strong> ' + (latest.sets || meta.defaultSets) + '×' + latest.weight + '×' + latest.reps);
+            }
+          }
+        });
+
+        if (baselineTargets.length) {
+          bodyEl.innerHTML = '<span style="color:var(--ink-muted);">Target Benchmarks:</span> ' + baselineTargets.slice(0, 3).join(' · ');
+        } else if (day === 'Thu' || (day === 'Tue' && appState.tuesdayTrack === 'intervals')) {
+          var latestRun = appState.runLogs[appState.runLogs.length - 1];
+          var paceStr = latestRun ? formatPaceSeconds(latestRun.seconds / latestRun.dist) + '/mi' : '9:40/mi';
+          bodyEl.innerHTML = '<span style="color:var(--ink-muted);">Benchmark Pace:</span> ' + escapeHtml(paceStr) + ' → building toward 7:00/mi &amp; 23:00 5K';
+        } else {
+          bodyEl.innerHTML = '<span style="color:var(--ink-muted);">First ' + day + ' log — complete today\'s session to set your week-over-week baseline.</span>';
         }
-
-        listEl.innerHTML = snaps.slice().reverse().slice(0, 14).map(function (s) {
-          var topLiftTxt = (s.exercises && s.exercises.length)
-            ? s.exercises.map(function (ex) { return ex.name + ' ' + ex.weight + '×' + ex.reps; }).slice(0, 2).join(' · ')
-            : 'No lifts logged';
-          var runTxt = (s.runs && s.runs.length)
-            ? ' · Run: ' + s.runs[0].miles + 'mi (' + s.runs[0].pace + '/mi)'
-            : '';
-
-          return (
-            '<div class="neu-well snapshot-row">' +
-              '<div class="row-between">' +
-                '<div style="min-width:0;flex:1;">' +
-                  '<span class="mono text-cobalt" style="font-size:11.5px;font-weight:800;">' + escapeHtml(s.date) + ' (' + escapeHtml(s.day) + ')</span>' +
-                  '<span style="font-size:12px;font-weight:700;color:var(--ink);margin-left:6px;">' + escapeHtml(s.split) + '</span>' +
-                '</div>' +
-                '<button type="button" data-action="delete-snapshot" data-date="' + escapeHtml(s.date) + '" class="neu-btn del-custom-btn" aria-label="Delete snapshot">✕</button>' +
-              '</div>' +
-              '<div class="mono" style="font-size:11px;color:var(--ink-sub);">' +
-                'Done: <strong>' + Number(s.completionPct) + '%</strong> · Wt: <strong>' + Number(s.weightLbs).toFixed(1) + ' lbs</strong> · ' +
-                Number(s.calories) + ' kcal / ' + Number(s.protein) + 'g Pro' +
-              '</div>' +
-              '<div style="font-size:11px;color:var(--ink-muted);">' +
-                escapeHtml(topLiftTxt + runTxt) +
-              '</div>' +
-            '</div>'
-          );
-        }).join('');
       }
 
       // =========================================================================
-      // 8. TOAST & AUDIO CHIME
+      // 9. TOAST & AUDIO CHIME
       // =========================================================================
       var toastTimerId = null;
       function showToast(msg) {
@@ -2050,7 +2376,7 @@
       }
 
       // =========================================================================
-      // 9. SYNCED 2:00 INTER-SET REST TIMER
+      // 10. SYNCED 2:00 INTER-SET REST TIMER
       // =========================================================================
       var restTimer = {
         total: 120,
@@ -2132,78 +2458,65 @@
       }
 
       // =========================================================================
-      // 10. TAB NAVIGATION
+      // 11. 5-TAB NAVIGATION
       // =========================================================================
       var activeTabName = 'today';
 
       function switchTab(tabName) {
         activeTabName = tabName;
-        var panels = document.querySelectorAll('.view-panel');
+        var panels = document.querySelectorAll('.tab-view');
         for (var i = 0; i < panels.length; i++) {
           panels[i].classList.toggle('active', panels[i].id === 'tab-' + tabName);
         }
-        var tabs = document.querySelectorAll('.dock-tab');
+        var tabs = document.querySelectorAll('.nav-btn');
         for (var j = 0; j < tabs.length; j++) {
           tabs[j].classList.toggle('active', tabs[j].getAttribute('data-tab') === tabName);
         }
 
-        if (tabName === 'performance') {
-          renderPerformanceTab();
+        if (tabName === 'strength') {
+          renderStrengthTab();
           requestAnimationFrame(function () {
             renderStrengthChart();
             renderExerciseExplorerChart();
           });
-        } else if (tabName === 'nutrition') {
-          renderNutritionTab();
+        } else if (tabName === 'runs') {
+          renderRunsTab();
+          requestAnimationFrame(renderRunPaceChart);
+        } else if (tabName === 'fuel') {
+          renderFuelTab();
           requestAnimationFrame(renderWeightChart);
-        } else if (tabName === 'mobility') {
-          renderMobilityTab();
+        } else if (tabName === 'history') {
+          renderHistoryTab();
         } else {
           renderTodayTab();
         }
       }
 
       // =========================================================================
-      // 11. TODAY TAB RENDERING
+      // 12. TODAY TAB RENDERING
       // =========================================================================
       var expandedExerciseKey = null;
 
       function renderTodayTab() {
         var now = new Date();
         var realTodayKey = getTodayDayKey(now);
-        var realTodaySession = getActiveDaySession(realTodayKey);
         var day = appState.selectedDay;
 
-        document.getElementById('liveCalendarDateText').textContent = 'TODAY · ' + formatLongCalendarDate(now).toUpperCase();
-        document.getElementById('liveTodaySplitText').textContent = "Today's Split (" + realTodayKey + "): " + realTodaySession.title;
+        document.getElementById('headerDaysBtnLabel').textContent = day.toUpperCase();
+        document.getElementById('liveCalendarDateText').textContent = (day === realTodayKey ? 'TODAY · ' : 'VIEWING ' + day.toUpperCase() + ' · ') + formatLongCalendarDate(now).toUpperCase();
 
         var jumpBtn = document.getElementById('jumpToTodayBtn');
         if (day !== realTodayKey) {
           jumpBtn.classList.remove('hidden');
-          jumpBtn.textContent = 'Back to ' + realTodayKey;
+          jumpBtn.textContent = 'Today (' + realTodayKey + ')';
         } else {
           jumpBtn.classList.add('hidden');
         }
 
         document.getElementById('customDayLabel').textContent = day.toUpperCase();
 
-        // 7-Day Selector Pills
-        var dayRow = document.getElementById('daySelectorRow');
-        dayRow.innerHTML = DAYS_ORDER.map(function (d) {
-          var sel = d === day ? ' active-btn' : '';
-          var isRealToday = d === realTodayKey;
-          var dotHtml = isRealToday ? '<div style="width:4px;height:4px;border-radius:50%;background:currentColor;margin:3px auto 0 auto;"></div>' : '';
-          return '<button type="button" data-action="select-day" data-day="' + d + '" class="neu-btn day-pill' + sel + '">' + d + dotHtml + '</button>';
-        }).join('');
-
-        // MVW Button
-        var mvwBtn = document.getElementById('mvwToggleBtn');
-        mvwBtn.textContent = 'Min Viable Mode: ' + (appState.mvwMode ? 'ON' : 'OFF');
-        mvwBtn.classList.toggle('active-btn', appState.mvwMode);
-
-        // Session Details
         var session = getActiveDaySession(day);
-        document.getElementById('dayFocusBadge').textContent = session.badge;
+        document.getElementById('dayFocusBadge').textContent = session.badge + (appState.mvwMode ? ' · MVW' : '');
         document.getElementById('dayTitleText').textContent = session.title;
         document.getElementById('daySubtitleText').textContent = session.subtitle;
 
@@ -2229,6 +2542,9 @@
           trackBox.classList.add('hidden');
           trackBtns.innerHTML = '';
         }
+
+        // Same-Split Comparison Card
+        renderSameSplitComparisonCard();
 
         // Checklist Items
         var visibleItems = appState.mvwMode
@@ -2323,8 +2639,8 @@
         }
 
         renderSorenessUI();
+        renderMobilitySection();
         renderRestTimerUI();
-        renderSnapshotsList();
       }
 
       function renderSorenessUI() {
@@ -2358,7 +2674,63 @@
       }
 
       // =========================================================================
-      // 12. STRENGTH, EXERCISE EXPLORER & ENGINE RENDERING
+      // 13. MOBILITY TIMER & DRILLS (EMBEDDED ON TODAY TAB)
+      // =========================================================================
+      var mobTimer = {
+        drillIdx: 0,
+        remaining: MOBILITY_DRILLS[0].seconds,
+        running: false,
+        intervalId: null
+      };
+
+      function stopMobInterval() {
+        if (mobTimer.intervalId) {
+          clearInterval(mobTimer.intervalId);
+          mobTimer.intervalId = null;
+        }
+        mobTimer.running = false;
+      }
+
+      function renderMobilitySection() {
+        var drill = MOBILITY_DRILLS[mobTimer.drillIdx] || MOBILITY_DRILLS[0];
+        document.getElementById('mobDrillStepLabel').textContent = 'DRILL ' + (mobTimer.drillIdx + 1) + ' OF ' + MOBILITY_DRILLS.length;
+        document.getElementById('mobDrillTitle').textContent = drill.title;
+        document.getElementById('mobDrillCue').textContent = drill.cue;
+        document.getElementById('mobTimerClock').textContent = formatClock(mobTimer.remaining);
+
+        var pct = drill.seconds > 0 ? Math.max(0, Math.min(100, (mobTimer.remaining / drill.seconds) * 100)) : 0;
+        document.getElementById('mobTimerBar').style.width = pct + '%';
+        document.getElementById('mobStartPauseBtn').textContent = mobTimer.running ? 'Pause' : 'Start Flow';
+
+        var drillsEl = document.getElementById('mobilityDrillsList');
+        drillsEl.innerHTML = MOBILITY_DRILLS.map(function (d, idx) {
+          var activeStyle = idx === mobTimer.drillIdx ? ' style="border-color:var(--cobalt);"' : '';
+          return (
+            '<div class="neu-well log-row"' + activeStyle + '>' +
+              '<div style="min-width:0;flex:1;">' +
+                '<div style="font-size:12.5px;font-weight:700;">' + (idx + 1) + '. ' + escapeHtml(d.title) + '</div>' +
+                '<div class="sub-text">' + escapeHtml(d.cue) + '</div>' +
+              '</div>' +
+              '<button type="button" data-action="select-mob-drill" data-mob-idx="' + idx + '" class="neu-btn mono" style="padding:6px 9px;font-size:11px;font-weight:700;">' + formatClock(d.seconds) + '</button>' +
+            '</div>'
+          );
+        }).join('');
+
+        var completedDays = 0;
+        DAYS_ORDER.forEach(function (dKey) {
+          if (appState.mobilityStreakDays[dKey] || appState.habitsByDay[dKey].jointBrush) {
+            completedDays += 1;
+          }
+        });
+        document.getElementById('mobilityStreakBadge').textContent = completedDays + '/7 Days';
+
+        var activeDone = Boolean(appState.mobilityStreakDays[appState.selectedDay] || appState.habitsByDay[appState.selectedDay].jointBrush);
+        var compBtn = document.getElementById('completeMobilityTodayBtn');
+        compBtn.textContent = activeDone ? appState.selectedDay + ' Joint Brush Completed ✓' : 'Mark ' + appState.selectedDay + ' Joint Brush Complete';
+      }
+
+      // =========================================================================
+      // 14. STRENGTH TAB RENDERING & CHARTS
       // =========================================================================
       function populateExerciseDropdowns() {
         var allEx = getAllExercises();
@@ -2383,7 +2755,7 @@
         }
       }
 
-      function renderPerformanceTab() {
+      function renderStrengthTab() {
         populateExerciseDropdowns();
 
         var bestMap = {
@@ -2408,7 +2780,6 @@
         document.getElementById('deadliftBestSet').textContent = bestMap.deadlift.weight + ' × ' + bestMap.deadlift.reps;
         document.getElementById('deadlift1RM').textContent = '1RM: ' + bestMap.deadlift.rm;
 
-        // Recent Strength Logs
         var logsEl = document.getElementById('strengthLogsList');
         var recent = appState.strengthLogs.slice().reverse().slice(0, 12);
         logsEl.innerHTML = recent.map(function (l) {
@@ -2425,41 +2796,6 @@
                 '</div>' +
               '</div>' +
               '<span class="badge-soft badge-cobalt mono">1RM ' + rm + '</span>' +
-            '</div>'
-          );
-        }).join('');
-
-        // Run & Pace Goals
-        var bestSecPerMile = Infinity;
-        appState.runLogs.forEach(function (r) {
-          if (r.dist > 0 && r.seconds > 0) {
-            var pace = r.seconds / r.dist;
-            if (pace < bestSecPerMile) bestSecPerMile = pace;
-          }
-        });
-        if (!Number.isFinite(bestSecPerMile)) bestSecPerMile = 580;
-
-        document.getElementById('bestPaceBadge').textContent = 'Best: ' + formatPaceSeconds(bestSecPerMile) + '/mi';
-        document.getElementById('mileGoalText').textContent = formatPaceSeconds(bestSecPerMile) + ' /mi';
-
-        var milePct = Math.max(12, Math.min(100, Math.round(((660 - bestSecPerMile) / (660 - 420)) * 100)));
-        document.getElementById('mileGoalFill').style.width = milePct + '%';
-
-        var est5kSec = Math.round(bestSecPerMile * 3.10686);
-        document.getElementById('fiveKGoalText').textContent = 'Est ' + formatClock(est5kSec);
-        var fiveKPct = Math.max(12, Math.min(100, Math.round(((2040 - est5kSec) / (2040 - 1380)) * 100)));
-        document.getElementById('fiveKGoalFill').style.width = fiveKPct + '%';
-
-        var runListEl = document.getElementById('runLogsList');
-        runListEl.innerHTML = appState.runLogs.slice().reverse().slice(0, 8).map(function (r) {
-          var paceStr = formatPaceSeconds(r.seconds / r.dist);
-          return (
-            '<div class="neu-well log-row">' +
-              '<div>' +
-                '<div style="font-size:12.5px;font-weight:700;">' + escapeHtml(r.type) + ' · ' + r.dist + ' mi</div>' +
-                '<div class="mono" style="font-size:11px;color:var(--ink-muted);margin-top:2px;">Time: ' + formatClock(r.seconds) + ' · ' + escapeHtml(r.date) + '</div>' +
-              '</div>' +
-              '<span class="badge-soft badge-coral mono">' + paceStr + '/mi</span>' +
             '</div>'
           );
         }).join('');
@@ -2621,7 +2957,148 @@
       }
 
       // =========================================================================
-      // 13. NUTRITION, WEIGHT & CSV EXPORT RENDERING
+      // 15. DEDICATED RUNS TAB RENDERING & PACE CHART
+      // =========================================================================
+      function renderRunsTab() {
+        var bestSecPerMile = Infinity;
+        var totalMiles = 0;
+
+        appState.runLogs.forEach(function (r) {
+          if (r.dist > 0 && r.seconds > 0) {
+            totalMiles += Number(r.dist);
+            var pace = r.seconds / r.dist;
+            if (pace < bestSecPerMile) bestSecPerMile = pace;
+          }
+        });
+        if (!Number.isFinite(bestSecPerMile)) bestSecPerMile = 580;
+
+        document.getElementById('bestPaceBadge').textContent = 'Best: ' + formatPaceSeconds(bestSecPerMile) + '/mi';
+
+        // 7:00 Mile Goal Ring (420s target from 660s starting baseline)
+        var milePct = Math.max(12, Math.min(100, Math.round(((660 - bestSecPerMile) / (660 - 420)) * 100)));
+        // 23:00 5K Goal Ring (1380s target from 2040s starting baseline)
+        var est5kSec = Math.round(bestSecPerMile * 3.10686);
+        var fiveKPct = Math.max(12, Math.min(100, Math.round(((2040 - est5kSec) / (2040 - 1380)) * 100)));
+        // Weekly / Logged Volume Ring (toward 12 mi/wk hybrid target)
+        var volPct = Math.min(100, Math.round((totalMiles / 12) * 100));
+
+        document.getElementById('runRingsRow').innerHTML =
+          renderCircularRing({
+            pct: milePct,
+            color: 'var(--cobalt)',
+            centerVal: formatPaceSeconds(bestSecPerMile),
+            centerUnit: '/mi',
+            label: '7:00 Mile',
+            sub: milePct + '% to goal'
+          }) +
+          renderCircularRing({
+            pct: fiveKPct,
+            color: 'var(--coral)',
+            centerVal: formatClock(est5kSec),
+            centerUnit: 'est 5K',
+            label: '23:00 5K',
+            sub: 'Goal 7:24/mi'
+          }) +
+          renderCircularRing({
+            pct: volPct,
+            color: 'var(--slate)',
+            centerVal: totalMiles.toFixed(1),
+            centerUnit: 'miles',
+            label: 'Logged Vol',
+            sub: appState.runLogs.length + ' sessions'
+          });
+
+        var runListEl = document.getElementById('runLogsList');
+        runListEl.innerHTML = appState.runLogs.slice().reverse().slice(0, 12).map(function (r) {
+          var paceStr = formatPaceSeconds(r.seconds / r.dist);
+          return (
+            '<div class="neu-well log-row">' +
+              '<div>' +
+                '<div style="font-size:12.5px;font-weight:700;">' + escapeHtml(r.type) + ' · ' + r.dist + ' mi</div>' +
+                '<div class="mono" style="font-size:11px;color:var(--ink-muted);margin-top:2px;">Time: ' + formatClock(r.seconds) + ' · ' + escapeHtml(r.date) + '</div>' +
+              '</div>' +
+              '<span class="badge-soft badge-coral mono">' + paceStr + '/mi</span>' +
+            '</div>'
+          );
+        }).join('');
+
+        renderRunPaceChart();
+      }
+
+      function renderRunPaceChart() {
+        var container = document.getElementById('runPaceChartContainer');
+        if (!container) return;
+        var w = Math.max(260, container.clientWidth || 320);
+        var h = 150;
+        var padL = 38;
+        var padR = 16;
+        var padT = 18;
+        var padB = 22;
+
+        var paces = appState.runLogs
+          .filter(function (r) { return r.dist > 0 && r.seconds > 0; })
+          .map(function (r) {
+            return {
+              secPerMile: Math.round(r.seconds / r.dist),
+              date: r.date || ''
+            };
+          });
+
+        if (!paces.length) {
+          container.innerHTML = '<div style="height:150px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink-muted);">Log runs to chart pace progression</div>';
+          return;
+        }
+
+        var secVals = paces.map(function (p) { return p.secPerMile; });
+        var minY = Math.min(400, Math.floor((Math.min.apply(null, secVals) - 20) / 15) * 15);
+        var maxY = Math.max(620, Math.ceil((Math.max.apply(null, secVals) + 20) / 15) * 15);
+        var spanY = Math.max(30, maxY - minY);
+
+        var isDark = document.documentElement.classList.contains('dark');
+        var lineCol = isDark ? '#f97316' : '#c2410c';
+        var goalCol = isDark ? '#60a5fa' : '#1d4ed8';
+
+        var svg = '<svg width="100%" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">';
+        [0, 0.5, 1].forEach(function (t) {
+          var y = padT + (h - padT - padB) * (1 - t);
+          var secLabel = Math.round(minY + spanY * t);
+          svg += '<line x1="' + padL + '" y1="' + y + '" x2="' + (w - padR) + '" y2="' + y + '" stroke="var(--chart-grid)" stroke-dasharray="3,3" />';
+          svg += '<text x="' + (padL - 5) + '" y="' + (y + 3) + '" text-anchor="end" fill="var(--ink-muted)" font-size="9" font-family="SF Mono, ui-monospace, Menlo, monospace">' + formatPaceSeconds(secLabel) + '</text>';
+        });
+
+        // 7:00/mi (420s) Goal Line
+        var goalY = padT + (h - padT - padB) * (1 - (420 - minY) / spanY);
+        svg += '<line x1="' + padL + '" y1="' + goalY.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + goalY.toFixed(1) + '" stroke="' + goalCol + '" stroke-width="1.4" stroke-dasharray="4,4" />';
+
+        var coords = paces.map(function (p, idx) {
+          var x = paces.length === 1
+            ? (padL + w - padR) / 2
+            : padL + ((w - padL - padR) * idx) / (paces.length - 1);
+          var y = padT + (h - padT - padB) * (1 - (p.secPerMile - minY) / spanY);
+          return { x: x, y: y, paceText: formatPaceSeconds(p.secPerMile), date: p.date };
+        });
+
+        if (coords.length > 1) {
+          var pathD = coords.map(function (c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
+          svg += '<path d="' + pathD + '" fill="none" stroke="' + lineCol + '" stroke-width="2.6" stroke-linecap="round" />';
+        }
+
+        coords.forEach(function (c, idx) {
+          svg += '<circle cx="' + c.x.toFixed(1) + '" cy="' + c.y.toFixed(1) + '" r="4.2" fill="' + lineCol + '" />';
+          if (idx === 0 || idx === coords.length - 1 || coords.length <= 5) {
+            svg += '<text x="' + c.x.toFixed(1) + '" y="' + Math.max(11, c.y - 7).toFixed(1) + '" text-anchor="middle" fill="var(--ink)" font-size="9" font-weight="700" font-family="SF Mono, ui-monospace, Menlo, monospace">' + c.paceText + '</text>';
+          }
+          if (idx === 0 || idx === coords.length - 1) {
+            svg += '<text x="' + c.x.toFixed(1) + '" y="' + (h - 5) + '" text-anchor="middle" fill="var(--ink-muted)" font-size="8.5" font-family="SF Mono, ui-monospace, Menlo, monospace">' + escapeHtml(c.date) + '</text>';
+          }
+        });
+
+        svg += '</svg>';
+        container.innerHTML = svg;
+      }
+
+      // =========================================================================
+      // 16. FUEL TAB (CIRCULAR RINGS, MACROS & WEIGHT TREND)
       // =========================================================================
       function getDailyKcalTarget(dayKey) {
         if (appState.calorieMode === 'steady') return 2250;
@@ -2636,25 +3113,62 @@
         return Math.round((sum / slice.length) * 10) / 10;
       }
 
-      function renderNutritionTab() {
+      function renderNutritionRings() {
+        var d = appState.selectedDay;
+        var dayData = appState.nutritionByDay[d] || { kcal: 0, pro: 0, carb: 0, fat: 0 };
+        var targetKcal = getDailyKcalTarget(d);
+        var usedKcal = Number(dayData.kcal) || 0;
+        var usedPro = Number(dayData.pro) || 0;
+        var remainKcal = targetKcal - usedKcal;
+
+        var kcalPct = targetKcal > 0 ? Math.min(100, Math.round((usedKcal / targetKcal) * 100)) : 0;
+        var proPct = Math.min(100, Math.round((usedPro / 185) * 100));
+        var balPct = targetKcal > 0 ? Math.max(0, Math.min(100, Math.round((Math.max(0, remainKcal) / targetKcal) * 100))) : 0;
+
+        document.getElementById('fuelRingsRow').innerHTML =
+          renderCircularRing({
+            pct: kcalPct,
+            color: usedKcal > targetKcal ? 'var(--coral)' : 'var(--cobalt)',
+            centerVal: usedKcal.toLocaleString(),
+            centerUnit: 'kcal',
+            label: 'Calories',
+            sub: 'Goal ' + targetKcal.toLocaleString()
+          }) +
+          renderCircularRing({
+            pct: proPct,
+            color: 'var(--coral)',
+            centerVal: usedPro + 'g',
+            centerUnit: '/ 185g',
+            label: 'Protein',
+            sub: proPct + '% hit'
+          }) +
+          renderCircularRing({
+            pct: balPct,
+            color: remainKcal < 0 ? 'var(--coral)' : 'var(--slate)',
+            centerVal: Math.abs(remainKcal).toLocaleString(),
+            centerUnit: remainKcal < 0 ? 'over' : 'left',
+            label: 'Balance',
+            sub: 'C ' + (dayData.carb || 0) + 'g · F ' + (dayData.fat || 0) + 'g'
+          });
+      }
+
+      function renderFuelTab() {
         var d = appState.selectedDay;
         document.getElementById('modeFlexBtn').classList.toggle('active-btn', appState.calorieMode === 'flex');
         document.getElementById('modeSteadyBtn').classList.toggle('active-btn', appState.calorieMode === 'steady');
+
+        renderNutritionRings();
 
         var weeklyTotal = 0;
         DAYS_ORDER.forEach(function (dayKey) {
           weeklyTotal += Number(appState.nutritionByDay[dayKey].kcal) || 0;
         });
-        var weeklyRemain = Math.max(0, 15750 - weeklyTotal);
         var pct = Math.min(100, Math.round((weeklyTotal / 15750) * 100));
 
-        document.getElementById('weeklyKcalUsed').textContent = weeklyTotal.toLocaleString() + ' kcal';
-        document.getElementById('weeklyKcalRemain').textContent = weeklyRemain.toLocaleString() + ' left';
+        document.getElementById('weeklyBankSummaryText').textContent = weeklyTotal.toLocaleString() + ' / 15,750 kcal';
         document.getElementById('weeklyKcalFill').style.width = pct + '%';
 
         document.getElementById('nutriActiveDayLabel').textContent = d.toUpperCase();
-        document.getElementById('dailyKcalTarget').textContent = getDailyKcalTarget(d).toLocaleString() + ' kcal';
-
         var dayData = appState.nutritionByDay[d];
         document.getElementById('inputKcal').value = dayData.kcal || '';
         document.getElementById('inputPro').value = dayData.pro || '';
@@ -2729,6 +3243,75 @@
         container.innerHTML = svg;
       }
 
+      // =========================================================================
+      // 17. DEDICATED HISTORY TAB & CSV/JSON EXPORTS
+      // =========================================================================
+      function renderHistoryTab() {
+        var filterStrip = document.getElementById('historyFilterStrip');
+        var filterOptions = ['ALL'].concat(DAYS_ORDER);
+        filterStrip.innerHTML = filterOptions.map(function (opt) {
+          var activeCls = appState.historyFilterDay === opt ? ' active-btn' : '';
+          return '<button type="button" data-history-filter="' + opt + '" class="neu-btn filter-pill' + activeCls + '">' + opt.toUpperCase() + '</button>';
+        }).join('');
+
+        var listEl = document.getElementById('dailySnapshotsList');
+        var badgeEl = document.getElementById('snapshotCountBadge');
+        var subEl = document.getElementById('snapshotStatusSub');
+        var allSnaps = appState.dailySnapshots || [];
+
+        badgeEl.textContent = allSnaps.length + (allSnaps.length === 1 ? ' Day' : ' Days');
+
+        var filteredSnaps = appState.historyFilterDay === 'ALL'
+          ? allSnaps
+          : allSnaps.filter(function (s) { return s.day === appState.historyFilterDay; });
+
+        if (!filteredSnaps.length) {
+          listEl.innerHTML = '<div class="neu-well log-row"><span class="sub-text">No snapshots match this filter yet. Tap <strong>Save Today</strong> above to archive today\'s log.</span></div>';
+          return;
+        }
+
+        var latest = filteredSnaps[filteredSnaps.length - 1];
+        if (subEl && latest.updatedAt) {
+          subEl.textContent = 'Latest archived: ' + latest.date + ' at ' + latest.updatedAt;
+        }
+
+        listEl.innerHTML = filteredSnaps.slice().reverse().map(function (s) {
+          var liftLines = (s.exercises && s.exercises.length)
+            ? s.exercises.map(function (ex) {
+                return escapeHtml(ex.name) + ' (' + ex.sets + '×' + ex.weight + '×' + ex.reps + ', 1RM ' + ex.est1RM + ')';
+              }).join(' · ')
+            : 'No strength sets logged';
+
+          var runLines = (s.runs && s.runs.length)
+            ? '<div style="font-size:11px;color:var(--coral);font-weight:600;">Runs: ' + s.runs.map(function (rn) {
+                return escapeHtml(rn.type) + ' ' + rn.miles + ' mi @ ' + escapeHtml(rn.pace) + '/mi';
+              }).join(' · ') + '</div>'
+            : '';
+
+          var soreStr = s.soreness
+            ? 'Soreness S/A/B: ' + s.soreness.shoulder + '/' + s.soreness.ankle + '/' + s.soreness.back
+            : '';
+
+          return (
+            '<div class="neu-well snapshot-row">' +
+              '<div class="row-between">' +
+                '<div style="min-width:0;flex:1;">' +
+                  '<span class="mono text-cobalt" style="font-size:11.5px;font-weight:800;">' + escapeHtml(s.date) + ' (' + escapeHtml(s.day) + ')</span>' +
+                  '<span style="font-size:12px;font-weight:700;color:var(--ink);margin-left:6px;">' + escapeHtml(s.split) + '</span>' +
+                '</div>' +
+                '<button type="button" data-delete-snapshot="' + escapeHtml(s.date) + '" class="neu-btn del-custom-btn" aria-label="Delete snapshot">✕</button>' +
+              '</div>' +
+              '<div class="mono" style="font-size:11px;color:var(--ink-sub);">' +
+                'Done: <strong>' + Number(s.completionPct) + '%</strong> · Wt: <strong>' + Number(s.weightLbs).toFixed(1) + ' lbs</strong> · ' +
+                Number(s.calories) + ' kcal / ' + Number(s.protein) + 'g Pro · ' + escapeHtml(soreStr) +
+              '</div>' +
+              '<div style="font-size:11px;color:var(--ink-muted);">' + liftLines + '</div>' +
+              runLines +
+            '</div>'
+          );
+        }).join('');
+      }
+
       function buildCsvExportString() {
         var headers = [
           'Date', 'Day', 'Split', 'Completion_Pct', 'Weight_Lbs',
@@ -2790,65 +3373,7 @@
       }
 
       // =========================================================================
-      // 14. MOBILITY TIMER & STREAK RENDERING
-      // =========================================================================
-      var mobTimer = {
-        drillIdx: 0,
-        remaining: MOBILITY_DRILLS[0].seconds,
-        running: false,
-        intervalId: null
-      };
-
-      function stopMobInterval() {
-        if (mobTimer.intervalId) {
-          clearInterval(mobTimer.intervalId);
-          mobTimer.intervalId = null;
-        }
-        mobTimer.running = false;
-      }
-
-      function renderMobilityTab() {
-        var drill = MOBILITY_DRILLS[mobTimer.drillIdx] || MOBILITY_DRILLS[0];
-        document.getElementById('mobDrillStepLabel').textContent = 'DRILL ' + (mobTimer.drillIdx + 1) + ' OF ' + MOBILITY_DRILLS.length;
-        document.getElementById('mobDrillTitle').textContent = drill.title;
-        document.getElementById('mobDrillCue').textContent = drill.cue;
-        document.getElementById('mobTimerClock').textContent = formatClock(mobTimer.remaining);
-
-        var pct = drill.seconds > 0 ? Math.max(0, Math.min(100, (mobTimer.remaining / drill.seconds) * 100)) : 0;
-        document.getElementById('mobTimerBar').style.width = pct + '%';
-        document.getElementById('mobStartPauseBtn').textContent = mobTimer.running ? 'Pause' : 'Start Flow';
-
-        var drillsEl = document.getElementById('mobilityDrillsList');
-        drillsEl.innerHTML = MOBILITY_DRILLS.map(function (d, idx) {
-          var activeStyle = idx === mobTimer.drillIdx ? ' style="border-color:var(--cobalt);"' : '';
-          return (
-            '<div class="neu-well log-row"' + activeStyle + '>' +
-              '<div style="min-width:0;flex:1;">' +
-                '<div style="font-size:12.5px;font-weight:700;">' + (idx + 1) + '. ' + escapeHtml(d.title) + '</div>' +
-                '<div class="sub-text">' + escapeHtml(d.cue) + '</div>' +
-              '</div>' +
-              '<button type="button" data-mob-idx="' + idx + '" class="neu-btn mono" style="padding:6px 9px;font-size:11px;font-weight:700;">' + formatClock(d.seconds) + '</button>' +
-            '</div>'
-          );
-        }).join('');
-
-        var completedDays = 0;
-        DAYS_ORDER.forEach(function (dKey) {
-          if (appState.mobilityStreakDays[dKey] || appState.habitsByDay[dKey].jointBrush) {
-            completedDays += 1;
-          }
-        });
-        document.getElementById('mobilityStreakBadge').textContent = completedDays + '/7 Days';
-
-        var weekEl = document.getElementById('mobilityWeekStrip');
-        weekEl.innerHTML = DAYS_ORDER.map(function (dKey) {
-          var isDone = Boolean(appState.mobilityStreakDays[dKey] || appState.habitsByDay[dKey].jointBrush);
-          return '<button type="button" data-mob-day="' + dKey + '" class="neu-btn day-pill' + (isDone ? ' active-btn' : '') + '">' + dKey + '</button>';
-        }).join('');
-      }
-
-      // =========================================================================
-      // 15. RECORDING STRENGTH SETS & BINDING ALL EVENTS
+      // 18. RECORDING STRENGTH SETS & BINDING ALL EVENTS
       // =========================================================================
       function recordStrengthSet(exerciseKey, setsVal, weightVal, repsVal, noteVal, startRestAfter) {
         var sets = Math.max(1, parseInt(setsVal, 10) || 1);
@@ -2877,7 +3402,7 @@
         saveState();
         upsertTodaySnapshot(false);
         renderTodayTab();
-        renderPerformanceTab();
+        renderStrengthTab();
         if (startRestAfter) {
           startRestTimer(120);
           showToast('Saved ' + sets + '×' + weight + '×' + reps + ' · 2:00 rest started');
@@ -2893,17 +3418,45 @@
           var next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
           safeSetItem(THEME_KEY, next);
           applyTheme(next);
-          if (activeTabName === 'performance') {
+          if (activeTabName === 'strength') {
             renderStrengthChart();
             renderExerciseExplorerChart();
+          } else if (activeTabName === 'runs') {
+            renderRunPaceChart();
+          } else if (activeTabName === 'fuel') {
+            renderWeightChart();
           }
-          if (activeTabName === 'nutrition') renderWeightChart();
         });
 
-        // Bottom Navigation Tabs
-        var dockTabs = document.querySelectorAll('.dock-tab');
-        for (var i = 0; i < dockTabs.length; i++) {
-          dockTabs[i].addEventListener('click', function () {
+        // Google Calendar-Style Slide-Over Day Drawer Controls
+        document.getElementById('openDrawerBtn').addEventListener('click', openDayDrawer);
+        document.getElementById('closeDrawerBtn').addEventListener('click', closeDayDrawer);
+        document.getElementById('drawerBackdrop').addEventListener('click', closeDayDrawer);
+
+        document.getElementById('drawerMvwBtn').addEventListener('click', function () {
+          appState.mvwMode = !appState.mvwMode;
+          saveState();
+          renderDayDrawer();
+          renderTodayTab();
+          showToast('Minimum Viable Mode: ' + (appState.mvwMode ? 'ON' : 'OFF'));
+        });
+
+        document.getElementById('drawerDayList').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-drawer-day]');
+          if (!btn) return;
+          appState.selectedDay = btn.getAttribute('data-drawer-day');
+          expandedExerciseKey = null;
+          saveState();
+          closeDayDrawer();
+          renderTodayTab();
+          renderFuelTab();
+          showToast('Viewing ' + appState.selectedDay);
+        });
+
+        // Bottom 5-Tab Navigation
+        var navBtns = document.querySelectorAll('.nav-btn');
+        for (var i = 0; i < navBtns.length; i++) {
+          navBtns[i].addEventListener('click', function () {
             switchTab(this.getAttribute('data-tab'));
           });
         }
@@ -2922,19 +3475,12 @@
           expandedExerciseKey = null;
           saveState();
           renderTodayTab();
-          renderNutritionTab();
-          showToast('Jumped to today (' + appState.selectedDay + ')');
+          renderFuelTab();
+          showToast('Returned to Today (' + appState.selectedDay + ')');
         });
 
         document.getElementById('saveSnapshotBtn').addEventListener('click', function () {
           upsertTodaySnapshot(true);
-        });
-
-        // MVW Mode & Checklist Reset
-        document.getElementById('mvwToggleBtn').addEventListener('click', function () {
-          appState.mvwMode = !appState.mvwMode;
-          saveState();
-          renderTodayTab();
         });
 
         document.getElementById('resetDayChecklistBtn').addEventListener('click', function () {
@@ -3006,7 +3552,7 @@
           document.getElementById('customExerciseDrawer').classList.add('hidden');
 
           renderTodayTab();
-          renderPerformanceTab();
+          renderStrengthTab();
           showToast('Added ' + name + ' (' + sets + '×' + weight + '×' + reps + ')');
         });
 
@@ -3016,13 +3562,7 @@
           if (!target) return;
           var action = target.getAttribute('data-action');
 
-          if (action === 'select-day') {
-            appState.selectedDay = target.getAttribute('data-day');
-            expandedExerciseKey = null;
-            saveState();
-            renderTodayTab();
-            renderNutritionTab();
-          } else if (action === 'select-track') {
+          if (action === 'select-track') {
             var d = target.getAttribute('data-day');
             var t = target.getAttribute('data-track');
             if (d === 'Tue') appState.tuesdayTrack = t;
@@ -3062,16 +3602,13 @@
             saveState();
             upsertTodaySnapshot(false);
             renderTodayTab();
-            renderPerformanceTab();
+            renderStrengthTab();
             showToast('Custom exercise removed');
-          } else if (action === 'delete-snapshot') {
-            var delDate = target.getAttribute('data-date');
-            appState.dailySnapshots = (appState.dailySnapshots || []).filter(function (s) {
-              return s.date !== delDate;
-            });
-            saveState();
-            renderSnapshotsList();
-            showToast('Removed snapshot ' + delDate);
+          } else if (action === 'select-mob-drill') {
+            stopMobInterval();
+            mobTimer.drillIdx = parseInt(target.getAttribute('data-mob-idx'), 10) || 0;
+            mobTimer.remaining = MOBILITY_DRILLS[mobTimer.drillIdx].seconds;
+            renderMobilitySection();
           }
         });
 
@@ -3109,7 +3646,62 @@
           });
         });
 
-        // Exercise Progress Explorer Controls
+        // Mobility Timer Controls (on Today Tab)
+        document.getElementById('mobStartPauseBtn').addEventListener('click', function () {
+          if (mobTimer.running) {
+            stopMobInterval();
+            renderMobilitySection();
+            return;
+          }
+          mobTimer.running = true;
+          renderMobilitySection();
+          mobTimer.intervalId = setInterval(function () {
+            mobTimer.remaining -= 1;
+            if (mobTimer.remaining <= 0) {
+              playChime();
+              if (mobTimer.drillIdx < MOBILITY_DRILLS.length - 1) {
+                mobTimer.drillIdx += 1;
+                mobTimer.remaining = MOBILITY_DRILLS[mobTimer.drillIdx].seconds;
+              } else {
+                mobTimer.remaining = 0;
+                stopMobInterval();
+                appState.mobilityStreakDays[appState.selectedDay] = true;
+                appState.habitsByDay[appState.selectedDay].jointBrush = true;
+                saveState();
+                upsertTodaySnapshot(false);
+                showToast('10-Min Joint Brush Complete!');
+              }
+            }
+            renderMobilitySection();
+          }, 1000);
+        });
+
+        document.getElementById('mobNextDrillBtn').addEventListener('click', function () {
+          mobTimer.drillIdx = (mobTimer.drillIdx + 1) % MOBILITY_DRILLS.length;
+          mobTimer.remaining = MOBILITY_DRILLS[mobTimer.drillIdx].seconds;
+          renderMobilitySection();
+        });
+
+        document.getElementById('mobResetBtn').addEventListener('click', function () {
+          stopMobInterval();
+          mobTimer.drillIdx = 0;
+          mobTimer.remaining = MOBILITY_DRILLS[0].seconds;
+          renderMobilitySection();
+        });
+
+        document.getElementById('completeMobilityTodayBtn').addEventListener('click', function () {
+          var d = appState.selectedDay;
+          var nextVal = !(appState.mobilityStreakDays[d] || appState.habitsByDay[d].jointBrush);
+          appState.mobilityStreakDays[d] = nextVal;
+          appState.habitsByDay[d].jointBrush = nextVal;
+          saveState();
+          upsertTodaySnapshot(false);
+          renderMobilitySection();
+          renderFuelTab();
+          showToast(nextVal ? (d + ' Joint Brush logged!') : (d + ' Joint Brush unchecked'));
+        });
+
+        // Exercise Progress Explorer Controls (Strength Tab)
         document.getElementById('explorerExerciseSelect').addEventListener('change', function (e) {
           appState.explorerExerciseKey = e.target.value;
           saveState();
@@ -3163,13 +3755,13 @@
           if (ok) document.getElementById('liftNoteInput').value = '';
         });
 
-        // Run Logger
+        // Dedicated Runs Tab Logger
         document.getElementById('logRunBtn').addEventListener('click', function () {
           var type = document.getElementById('runTypeInput').value;
           var dist = parseFloat(document.getElementById('runDistInput').value);
           var seconds = parseDurationToSeconds(document.getElementById('runTimeInput').value);
           if (!Number.isFinite(dist) || dist <= 0 || !Number.isFinite(seconds) || seconds <= 0) {
-            showToast('Enter valid distance & mm:ss time');
+            showToast('Enter valid miles & mm:ss time');
             return;
           }
           var now = new Date();
@@ -3180,22 +3772,42 @@
           upsertTodaySnapshot(false);
           document.getElementById('runDistInput').value = '';
           document.getElementById('runTimeInput').value = '';
-          renderPerformanceTab();
+          renderRunsTab();
           renderTodayTab();
           showToast('Logged ' + dist + ' mi @ ' + formatPaceSeconds(seconds / dist) + '/mi');
         });
 
-        // Nutrition & Habits Controls
+        // Fuel Tab Controls
         document.getElementById('modeFlexBtn').addEventListener('click', function () {
           appState.calorieMode = 'flex';
           saveState();
-          renderNutritionTab();
+          renderFuelTab();
         });
 
         document.getElementById('modeSteadyBtn').addEventListener('click', function () {
           appState.calorieMode = 'steady';
           saveState();
-          renderNutritionTab();
+          renderFuelTab();
+        });
+
+        document.getElementById('addMealMacrosBtn').addEventListener('click', function () {
+          var d = appState.selectedDay;
+          var addK = Math.max(0, parseInt(document.getElementById('inputKcal').value, 10) || 0);
+          var addP = Math.max(0, parseInt(document.getElementById('inputPro').value, 10) || 0);
+          var addC = Math.max(0, parseInt(document.getElementById('inputCarb').value, 10) || 0);
+          var addF = Math.max(0, parseInt(document.getElementById('inputFat').value, 10) || 0);
+          if (!addK && !addP && !addC && !addF) {
+            showToast('Enter meal calories or macros first');
+            return;
+          }
+          appState.nutritionByDay[d].kcal = (Number(appState.nutritionByDay[d].kcal) || 0) + addK;
+          appState.nutritionByDay[d].pro = (Number(appState.nutritionByDay[d].pro) || 0) + addP;
+          appState.nutritionByDay[d].carb = (Number(appState.nutritionByDay[d].carb) || 0) + addC;
+          appState.nutritionByDay[d].fat = (Number(appState.nutritionByDay[d].fat) || 0) + addF;
+          saveState();
+          upsertTodaySnapshot(false);
+          renderFuelTab();
+          showToast('Added meal (+' + addK + ' kcal, +' + addP + 'g pro)');
         });
 
         document.getElementById('saveNutritionBtn').addEventListener('click', function () {
@@ -3206,9 +3818,8 @@
           appState.nutritionByDay[d].fat = Math.max(0, parseInt(document.getElementById('inputFat').value, 10) || 0);
           saveState();
           upsertTodaySnapshot(false);
-          renderNutritionTab();
-          renderTodayTab();
-          showToast(d + ' nutrition saved');
+          renderFuelTab();
+          showToast(d + ' nutrition updated');
         });
 
         var habitBtns = document.querySelectorAll('[data-habit]');
@@ -3222,8 +3833,8 @@
             }
             saveState();
             upsertTodaySnapshot(false);
-            renderNutritionTab();
-            renderMobilityTab();
+            renderFuelTab();
+            renderMobilitySection();
           });
         }
 
@@ -3241,12 +3852,36 @@
           saveState();
           upsertTodaySnapshot(false);
           document.getElementById('weightInput').value = '';
-          renderNutritionTab();
-          renderTodayTab();
+          renderFuelTab();
           showToast('Logged ' + val.toFixed(1) + ' lbs');
         });
 
-        // CSV Export, JSON Backup & Reset
+        // History Tab Controls, CSV Export & JSON Backup
+        document.getElementById('historySaveTodayBtn').addEventListener('click', function () {
+          upsertTodaySnapshot(true);
+        });
+
+        document.getElementById('tab-history').addEventListener('click', function (e) {
+          var filterBtn = e.target.closest('[data-history-filter]');
+          if (filterBtn) {
+            appState.historyFilterDay = filterBtn.getAttribute('data-history-filter');
+            saveState();
+            renderHistoryTab();
+            return;
+          }
+          var delBtn = e.target.closest('[data-delete-snapshot]');
+          if (delBtn) {
+            var delDate = delBtn.getAttribute('data-delete-snapshot');
+            appState.dailySnapshots = (appState.dailySnapshots || []).filter(function (s) {
+              return s.date !== delDate;
+            });
+            saveState();
+            renderHistoryTab();
+            renderTodayTab();
+            showToast('Removed snapshot ' + delDate);
+          }
+        });
+
         document.getElementById('exportCsvBtn').addEventListener('click', function () {
           var csvStr = buildCsvExportString();
           var iso = getLocalIsoDate(new Date());
@@ -3306,9 +3941,10 @@
             appState = loadState();
             saveState();
             renderTodayTab();
-            renderPerformanceTab();
-            renderNutritionTab();
-            renderMobilityTab();
+            renderStrengthTab();
+            renderRunsTab();
+            renderFuelTab();
+            renderHistoryTab();
             document.getElementById('importBox').classList.add('hidden');
             showToast('Backup restored');
           } catch (e) {
@@ -3323,106 +3959,38 @@
           saveState();
           upsertTodaySnapshot(false);
           renderTodayTab();
-          renderPerformanceTab();
-          renderNutritionTab();
-          renderMobilityTab();
+          renderStrengthTab();
+          renderRunsTab();
+          renderFuelTab();
+          renderHistoryTab();
           showToast('App reset to default baselines');
         });
 
-        // Mobility Controls
-        document.getElementById('mobStartPauseBtn').addEventListener('click', function () {
-          if (mobTimer.running) {
-            stopMobInterval();
-            renderMobilityTab();
-            return;
-          }
-          mobTimer.running = true;
-          renderMobilityTab();
-          mobTimer.intervalId = setInterval(function () {
-            mobTimer.remaining -= 1;
-            if (mobTimer.remaining <= 0) {
-              playChime();
-              if (mobTimer.drillIdx < MOBILITY_DRILLS.length - 1) {
-                mobTimer.drillIdx += 1;
-                mobTimer.remaining = MOBILITY_DRILLS[mobTimer.drillIdx].seconds;
-              } else {
-                mobTimer.remaining = 0;
-                stopMobInterval();
-                appState.mobilityStreakDays[appState.selectedDay] = true;
-                appState.habitsByDay[appState.selectedDay].jointBrush = true;
-                saveState();
-                upsertTodaySnapshot(false);
-                showToast('10-Min Joint Brush Complete!');
-              }
-            }
-            renderMobilityTab();
-          }, 1000);
-        });
-
-        document.getElementById('mobNextDrillBtn').addEventListener('click', function () {
-          mobTimer.drillIdx = (mobTimer.drillIdx + 1) % MOBILITY_DRILLS.length;
-          mobTimer.remaining = MOBILITY_DRILLS[mobTimer.drillIdx].seconds;
-          renderMobilityTab();
-        });
-
-        document.getElementById('mobResetBtn').addEventListener('click', function () {
-          stopMobInterval();
-          mobTimer.drillIdx = 0;
-          mobTimer.remaining = MOBILITY_DRILLS[0].seconds;
-          renderMobilityTab();
-        });
-
-        document.getElementById('tab-mobility').addEventListener('click', function (e) {
-          var drillBtn = e.target.closest('[data-mob-idx]');
-          if (drillBtn) {
-            stopMobInterval();
-            mobTimer.drillIdx = parseInt(drillBtn.getAttribute('data-mob-idx'), 10) || 0;
-            mobTimer.remaining = MOBILITY_DRILLS[mobTimer.drillIdx].seconds;
-            renderMobilityTab();
-            return;
-          }
-          var dayBtn = e.target.closest('[data-mob-day]');
-          if (dayBtn) {
-            var dKey = dayBtn.getAttribute('data-mob-day');
-            var nextVal = !Boolean(appState.mobilityStreakDays[dKey]);
-            appState.mobilityStreakDays[dKey] = nextVal;
-            appState.habitsByDay[dKey].jointBrush = nextVal;
-            saveState();
-            upsertTodaySnapshot(false);
-            renderMobilityTab();
-            renderNutritionTab();
-          }
-        });
-
-        document.getElementById('completeMobilityTodayBtn').addEventListener('click', function () {
-          var d = appState.selectedDay;
-          appState.mobilityStreakDays[d] = true;
-          appState.habitsByDay[d].jointBrush = true;
-          saveState();
-          upsertTodaySnapshot(false);
-          renderMobilityTab();
-          renderNutritionTab();
-          showToast(d + ' Joint Brush logged!');
-        });
-
+        // Debounced Resize Redraw for SVG Charts
+        var resizeTimer = null;
         window.addEventListener('resize', function () {
-          renderStrengthChart();
-          renderExerciseExplorerChart();
-          renderWeightChart();
+          if (resizeTimer) clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(function () {
+            renderStrengthChart();
+            renderExerciseExplorerChart();
+            renderRunPaceChart();
+            renderWeightChart();
+          }, 120);
         });
       }
 
       // =========================================================================
-      // 16. BOOTSTRAP
+      // 19. BOOTSTRAP
       // =========================================================================
       function initApp() {
         initTheme();
         bindEvents();
         upsertTodaySnapshot(false);
         renderTodayTab();
-        renderPerformanceTab();
-        renderNutritionTab();
-        renderMobilityTab();
+        renderStrengthTab();
+        renderRunsTab();
+        renderFuelTab();
+        renderHistoryTab();
       }
 
       if (document.readyState === 'loading') {
