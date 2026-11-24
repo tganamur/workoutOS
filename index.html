@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>workoutOS</title>
+  <style>
+    :root {
+      --bg-canvas: #eef2f8;
+      --bg-gradient: radial-gradient(circle at 12% 8%, rgba(37, 99, 235, 0.14), transparent 45%),
+                     radial-gradient(circle at 88% 14%, rgba(79, 70, 229, 0.12), transparent 44%),
+                     radial-gradient(circle at 50% 92%, rgba(234, 88, 12, 0.08), transparent 48%),
+                     #eef2f8;
+      --header-bg: rgba(244, 247, 253, 0.84);
+      --glass-card: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.68));
+      --glass-hero: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(237, 243, 255, 0.78));
+      --glass-border: rgba(255, 255, 255, 0.92);
+      --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.98);
+      --shadow-card: 0 12px 30px -8px rgba(15, 23, 42, 0.09), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+      --well-bg: rgba(226, 232, 242, 0.7);
+      --well-border: rgba(203, 213, 225, 0.85);
+      --shadow-well: inset 2px 2px 5px rgba(15, 23, 42, 0.06), inset -2px -2px 5px rgba(255, 255, 255, 0.85);
+      --btn-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(241, 245, 249, 0.88));
+      --shadow-btn: 0 4px 12px rgba(15, 23, 42, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      --ink: #0f172a;
+      --ink-sub: #475569;
+      --ink-muted: #64748b;
+      --cobalt: #2563eb;
+      --cobalt-soft: rgba(37, 99, 235, 0.12);
+      --indigo: #4f46e5;
+      --indigo-soft: rgba(79, 70, 229, 0.12);
+      --coral: #ea580c;
+      --coral-soft: rgba(234, 88, 12, 0.12);
+      --chart-grid: rgba(148, 163, 184, 0.28);
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+      --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
+    }
+
+    html.dark {
+      --bg-canvas: #0b0f17;
+      --bg-gradient: radial-gradient(circle at 14% 10%, rgba(96, 165, 250, 0.15), transparent 44%),
+                     radial-gradient(circle at 86% 16%, rgba(129, 140, 248, 0.13), transparent 44%),
+                     radial-gradient(circle at 50% 90%, rgba(251, 146, 60, 0.09), transparent 48%),
+                     #0b0f17;
+      --header-bg: rgba(13, 18, 28, 0.84);
+      --glass-card: linear-gradient(145deg, rgba(26, 34, 50, 0.82), rgba(17, 23, 36, 0.66));
+      --glass-hero: linear-gradient(135deg, rgba(30, 41, 62, 0.88), rgba(19, 27, 44, 0.72));
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      --shadow-card: 0 16px 38px -10px rgba(0, 0, 0, 0.58), 0 4px 12px -2px rgba(0, 0, 0, 0.36);
+      --well-bg: rgba(10, 14, 23, 0.72);
+      --well-border: rgba(255, 255, 255, 0.09);
+      --shadow-well: inset 2px 2px 6px rgba(0, 0, 0, 0.52), inset -1px -1px 4px rgba(255, 255, 255, 0.05);
+      --btn-bg: linear-gradient(145deg, rgba(34, 44, 65, 0.9), rgba(21, 29, 44, 0.82));
+      --shadow-btn: 0 6px 16px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      --ink: #f8fafc;
+      --ink-sub: #cbd5e1;
+      --ink-muted: #94a3b8;
+      --cobalt: #60a5fa;
+      --cobalt-soft: rgba(96, 165, 250, 0.18);
+      --indigo: #818cf8;
+      --indigo-soft: rgba(129, 140, 248, 0.18);
+      --coral: #fb923c;
+      --coral-soft: rgba(251, 146, 60, 0.18);
+      --chart-grid: rgba(148, 163, 184, 0.18);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: var(--font-sans);
+      background: var(--bg-gradient);
+      background-color: var(--bg-canvas);
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Sticky Top Header */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px 16px;
+      background: var(--header-bg);
+      -webkit-backdrop-filter: blur(22px) saturate(165%);
+      backdrop-filter: blur(22px) saturate(165%);
+      border-bottom: 1px solid var(--well-border);
+    }
+
+    .header-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }
+
+    .brand-title span {
+      color: var(--cobalt);
+    }
+
+    .meta-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--well-bg);
+      border: 1px solid var(--well-border);
+      color: var(--cobalt);
+      white-space: nowrap;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .weight-pill {
+      padding: 5px 11px;
+      border-radius: 12px;
+      background: var(--well-bg);
+      border: 1px solid var(--well-border);
+      box-shadow: var(--shadow-well);
+      text-align: right;
+    }
+
+    .weight-pill-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink-muted);
+    }
+
+    .weight-pill-val {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    /* Main Container */
+    .main-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 14px 14px 20px 14px;
+    }
+
+    .view-panel {
+      display: none;
+    }
+
+    .view-panel.active {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Bento Cards */
+    .bento-card {
+      background: var(--glass-card);
+      -webkit-backdrop-filter: blur(22px) saturate(165%);
+      backdrop-filter: blur(22px) saturate(165%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-card), var(--glass-edge);
+      border-radius: 22px;
+      padding: 16px;
+    }
+
+    .bento-hero {
+      background: var(--glass-hero);
+      -webkit-backdrop-filter: blur(24px) saturate(175%);
+      backdrop-filter: blur(24px) saturate(175%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-card), var(--glass-edge);
+      border-radius: 24px;
+      padding: 18px;
+    }
+
+    .neu-well {
+      background: var(--well-bg);
+      border: 1px solid var(--well-border);
+      box-shadow: var(--shadow-well);
+      border-radius: 14px;
+    }
+
+    .neu-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--btn-bg);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-btn);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    .neu-btn:active {
+      transform: scale(0.97);
+    }
+
+    .neu-btn.active-btn {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 8px 18px -4px rgba(37, 99, 235, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .primary-cta {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #ffffff;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+    }
+
+    .primary-cta:active {
+      transform: scale(0.98);
+    }
+
+    .coral-cta {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ea580c, #d97706);
+      color: #ffffff;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 20px -4px rgba(234, 88, 12, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+    }
+
+    .coral-cta:active {
+      transform: scale(0.98);
+    }
+
+    .theme-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    /* Layout Helpers */
+    .row-between {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .row-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-muted);
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .hero-title {
+      margin: 6px 0 3px 0;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: var(--ink);
+    }
+
+    .sub-text {
+      margin: 0;
+      font-size: 12.5px;
+      color: var(--ink-sub);
+      line-height: 1.45;
+    }
+
+    .badge-soft {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--cobalt-soft);
+      color: var(--cobalt);
+    }
+
+    .badge-indigo {
+      background: var(--indigo-soft);
+      color: var(--indigo);
+    }
+
+    .badge-coral {
+      background: var(--coral-soft);
+      color: var(--coral);
+    }
+
+    /* 7-Day Selector Strip */
+    .day-strip {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .day-pill {
+      padding: 10px 2px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--ink-sub);
+    }
+
+    .mvw-btn {
+      padding: 7px 11px;
+      font-size: 11.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+
+    /* Progress Bar */
+    .progress-track {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--well-bg);
+      border: 1px solid var(--well-border);
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2563eb, #4f46e5);
+      transition: width 0.25s ease;
+    }
+
+    .progress-fill-indigo {
+      background: linear-gradient(90deg, #4f46e5, #818cf8);
+    }
+
+    /* Dynamic Mode Grid */
+    .mode-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .mode-btn {
+      padding: 10px 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--ink-sub);
+    }
+
+    .habit-callout {
+      padding: 11px 13px;
+      font-size: 12px;
+      color: var(--ink-sub);
+      line-height: 1.45;
+      margin-top: 10px;
+    }
+
+    /* Checklist Items */
+    .checklist-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 12px;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+
+    .check-row.is-done {
+      opacity: 0.62;
+    }
+
+    .check-box {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(100, 116, 139, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: #ffffff;
+    }
+
+    .check-row.is-done .check-box {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .check-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .check-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .item-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .item-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .check-row.is-done .item-name {
+      text-decoration: line-through;
+    }
+
+    .item-detail {
+      margin: 4px 0 0 0;
+      font-size: 12px;
+      color: var(--ink-sub);
+      line-height: 1.4;
+    }
+
+    /* Inputs & Forms */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .field-input, .field-select {
+      width: 100%;
+      padding: 11px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      background: var(--well-bg);
+      border: 1px solid var(--well-border);
+      box-shadow: var(--shadow-well);
+      border-radius: 13px;
+      outline: none;
+      font-family: var(--font-sans);
+    }
+
+    .field-input.mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Sliders */
+    .slider-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .slider-card {
+      padding: 11px 13px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.3);
+      outline: none;
+      margin-top: 8px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border: 2px solid #ffffff;
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.45);
+      cursor: pointer;
+    }
+
+    .alert-box {
+      margin-top: 10px;
+      padding: 11px 13px;
+      border-radius: 13px;
+      background: var(--coral-soft);
+      border: 1px solid rgba(234, 88, 12, 0.35);
+      color: var(--coral);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    /* Metric Boxes */
+    .metric-box {
+      padding: 12px;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-muted);
+    }
+
+    .metric-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ink);
+      margin-top: 3px;
+    }
+
+    .metric-sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* Chart Well */
+    .chart-box {
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .svg-wrap {
+      width: 100%;
+      height: 145px;
+      margin-top: 6px;
+    }
+
+    /* Log Rows */
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .log-row {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    /* Mobility Timer */
+    .timer-well {
+      padding: 18px 14px;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .timer-clock {
+      font-family: var(--font-mono);
+      font-size: 44px;
+      font-weight: 800;
+      color: var(--cobalt);
+      margin: 10px 0;
+      letter-spacing: -0.02em;
+    }
+
+    /* Floating Bottom Dock */
+    .bottom-dock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+      padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)) 12px;
+      background: var(--header-bg);
+      -webkit-backdrop-filter: blur(22px) saturate(165%);
+      backdrop-filter: blur(22px) saturate(165%);
+      border-top: 1px solid var(--well-border);
+    }
+
+    .dock-grid {
+      max-width: 680px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .dock-btn {
+      padding: 11px 4px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--ink-sub);
+    }
+
+    /* Toast */
+    .toast-pill {
+      position: fixed;
+      top: calc(64px + env(safe-area-inset-top, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.92);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .toast-pill.show {
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .text-cobalt { color: var(--cobalt); }
+    .text-indigo { color: var(--indigo); }
+    .text-coral { color: var(--coral); }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <h1 class="brand-title">workout<span>OS</span></h1>
+        <span class="meta-pill">6'2" · 25y</span>
+      </div>
+      <div class="header-actions">
+        <div class="weight-pill">
+          <div class="weight-pill-label">7-Day Avg</div>
+          <div id="headerWeight" class="weight-pill-val">240.0 lbs</div>
+        </div>
+        <button id="themeToggleBtn" type="button" class="neu-btn theme-btn" aria-label="Toggle theme">
+          <svg id="sunIcon" class="hidden" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"></path>
+          </svg>
+          <svg id="moonIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="toastBanner" class="toast-pill">Saved</div>
+
+  <main class="main-wrap">
+
+    <!-- ==================== TAB 1: TODAY ==================== -->
+    <section id="tab-today" class="view-panel active">
+
+      <div class="bento-card">
+        <div class="row-between">
+          <span class="section-eyebrow">Weekly Schedule</span>
+          <button id="mvwToggleBtn" type="button" class="neu-btn mvw-btn">
+            <span id="mvwDot" class="dot-indicator"></span>
+            <span>Min Viable Mode</span>
+          </button>
+        </div>
+        <div id="daySelectorRow" class="day-strip"></div>
+      </div>
+
+      <div class="bento-hero">
+        <div class="row-wrap">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span id="dayBadge" class="badge-soft">MON</span>
+              <span id="dayDurationBadge" class="mono" style="font-size:11px;color:var(--ink-muted);">55–65 min</span>
+            </div>
+            <h2 id="dayTitle" class="hero-title">Lower A — Squat Focus &amp; Core</h2>
+            <p id="daySubtitle" class="sub-text">Primary Squat strength + single-leg &amp; trunk stability</p>
+          </div>
+          <div class="neu-well" style="padding:8px 12px;text-align:right;">
+            <div class="section-eyebrow" style="font-size:9px;">Completed</div>
+            <div id="dayCompletionText" class="mono text-cobalt" style="font-size:14px;font-weight:800;margin-top:2px;">0 / 7</div>
+          </div>
+        </div>
+
+        <div class="progress-track">
+          <div id="dayProgressBar" class="progress-fill" style="width:0%;"></div>
+        </div>
+
+        <div id="dynamicModeBox" class="hidden">
+          <div class="section-eyebrow text-coral">Dynamic Day Mode</div>
+          <div id="dynamicModeButtons" class="mode-grid-2"></div>
+        </div>
+
+        <div id="habitNoteBox" class="neu-well habit-callout"></div>
+      </div>
+
+      <div class="bento-card">
+        <div class="row-between">
+          <h3 class="card-title">Session Checklist</h3>
+          <button id="resetDayChecksBtn" type="button" class="neu-btn" style="padding:6px 11px;font-size:11.5px;font-weight:700;">Reset Day</button>
+        </div>
+        <div id="workoutChecklist" class="checklist-stack"></div>
+      </div>
+
+      <div id="postCardioCard" class="bento-card hidden">
+        <div class="row-between">
+          <div>
+            <h3 class="card-title">Optional Post-Lift Cardio</h3>
+            <p class="sub-text">10–20 min low-impact Zone 2 (skip if joints feel fatigued)</p>
+          </div>
+          <button id="postCardioToggleBtn" type="button" class="neu-btn" style="padding:8px 12px;font-size:12px;font-weight:700;">Mark Done</button>
+        </div>
+        <div class="form-grid-2">
+          <select id="postCardioModality" class="field-select">
+            <option value="Stationary Bike (Zone 2)">Stationary Bike (Zone 2)</option>
+            <option value="Incline Treadmill Walk">Incline Treadmill Walk</option>
+            <option value="Rower (Easy Pace)">Rower (Easy Pace)</option>
+          </select>
+          <div class="neu-well row-between" style="padding:10px 12px;">
+            <span class="sub-text" style="font-weight:600;">Minutes</span>
+            <input id="postCardioMins" type="number" min="5" max="45" value="15" class="mono" style="width:52px;text-align:right;border:none;background:transparent;color:var(--ink);font-size:13px;font-weight:700;outline:none;" />
+          </div>
+        </div>
+      </div>
+
+      <div class="bento-card">
+        <div class="row-between">
+          <div>
+            <h3 class="card-title">Joint Readiness Check (0–10)</h3>
+            <p class="sub-text">Keep sharp pain at 0–2; auto-flags above 4/10</p>
+          </div>
+          <span id="jointStatusBadge" class="badge-soft">Cleared</span>
+        </div>
+
+        <div class="slider-grid">
+          <div class="neu-well slider-card">
+            <div class="row-between">
+              <span style="font-size:12.5px;font-weight:700;">Shoulder</span>
+              <span id="shoulderVal" class="mono" style="font-size:12.5px;font-weight:700;">2/10</span>
+            </div>
+            <input id="shoulderSlider" type="range" min="0" max="10" value="2" />
+          </div>
+          <div class="neu-well slider-card">
+            <div class="row-between">
+              <span style="font-size:12.5px;font-weight:700;">Ankles</span>
+              <span id="ankleVal" class="mono" style="font-size:12.5px;font-weight:700;">2/10</span>
+            </div>
+            <input id="ankleSlider" type="range" min="0" max="10" value="2" />
+          </div>
+          <div class="neu-well slider-card">
+            <div class="row-between">
+              <span style="font-size:12.5px;font-weight:700;">Lower Back</span>
+              <span id="backVal" class="mono" style="font-size:12.5px;font-weight:700;">2/10</span>
+            </div>
+            <input id="backSlider" type="range" min="0" max="10" value="2" />
+          </div>
+        </div>
+
+        <div id="jointAlertBanner" class="alert-box hidden"></div>
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 2: STRENGTH & RUNS ==================== -->
+    <section id="tab-performance" class="view-panel">
+
+      <div class="bento-hero">
+        <div class="row-between">
+          <div>
+            <h2 class="card-title" style="font-size:18px;">Big 3 Strength Benchmarks</h2>
+            <p class="sub-text">Estimated 1RM via Epley formula from top sets</p>
+          </div>
+          <span class="badge-soft badge-indigo">1–2 RIR</span>
+        </div>
+
+        <div class="form-grid-3">
+          <div class="neu-well metric-box">
+            <div class="metric-label">Bench Press</div>
+            <div id="benchTopText" class="metric-val">225 × 4</div>
+            <div id="bench1RMText" class="metric-sub text-cobalt">1RM: 255</div>
+          </div>
+          <div class="neu-well metric-box">
+            <div class="metric-label">Back Squat</div>
+            <div id="squatTopText" class="metric-val">225 × 5</div>
+            <div id="squat1RMText" class="metric-sub text-coral">1RM: 263</div>
+          </div>
+          <div class="neu-well metric-box">
+            <div class="metric-label">Deadlift</div>
+            <div id="deadliftTopText" class="metric-val">315 × 5</div>
+            <div id="deadlift1RMText" class="metric-sub text-indigo">1RM: 368</div>
+          </div>
+        </div>
+
+        <div class="neu-well chart-box">
+          <div class="row-between">
+            <span class="metric-label">Estimated 1RM Trend (lbs)</span>
+            <div class="mono" style="font-size:10px;font-weight:700;display:flex;gap:10px;">
+              <span class="text-cobalt">● Bench</span>
+              <span class="text-coral">● Squat</span>
+              <span class="text-indigo">● Deadlift</span>
+            </div>
+          </div>
+          <div id="strengthChartContainer" class="svg-wrap"></div>
+        </div>
+      </div>
+
+      <div class="bento-card">
+        <h3 class="card-title">Log Working Set</h3>
+        <div class="mt-2">
+          <select id="liftSelect" class="field-select">
+            <option value="bench">Barbell Bench Press</option>
+            <option value="squat">Barbell Back Squat</option>
+            <option value="deadlift">Deadlift (Trap Bar / Conv.)</option>
+            <option value="rdl">Romanian Deadlift</option>
+            <option value="row">Chest-Supported Row</option>
+          </select>
+        </div>
+        <div class="form-grid-3">
+          <input id="liftWeightInput" type="number" inputmode="decimal" placeholder="Weight (lbs)" class="field-input mono" />
+          <input id="liftRepsInput" type="number" inputmode="numeric" placeholder="Reps" class="field-input mono" />
+          <input id="liftRirInput" type="number" inputmode="numeric" placeholder="RIR (1-2)" class="field-input mono" />
+        </div>
+        <button id="logStrengthBtn" type="button" class="primary-cta mt-2">Save Strength Set</button>
+        <div id="recentLiftsList" class="log-list"></div>
+      </div>
+
+      <div class="bento-card">
+        <div class="row-between">
+          <div>
+            <h3 class="card-title">Hybrid Engine &amp; Pace Goals</h3>
+            <p class="sub-text">Target: 7:00 Mile &amp; 23:00 5K (7:24/mi)</p>
+          </div>
+          <span id="bestMilePaceBadge" class="badge-soft">Best: 9:40/mi</span>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="neu-well metric-box">
+            <div class="row-between">
+              <span style="font-size:12px;font-weight:700;">7:00 Mile Goal</span>
+              <span id="mileGoalSub" class="mono text-cobalt" style="font-size:12px;font-weight:700;">9:40 /mi</span>
+            </div>
+            <div class="progress-track" style="margin:8px 0 0 0;height:7px;">
+              <div id="mileGoalBar" class="progress-fill" style="width:24%;"></div>
+            </div>
+          </div>
+          <div class="neu-well metric-box">
+            <div class="row-between">
+              <span style="font-size:12px;font-weight:700;">23:00 5K Goal</span>
+              <span id="fiveKGoalSub" class="mono text-indigo" style="font-size:12px;font-weight:700;">Est 30:02</span>
+            </div>
+            <div class="progress-track" style="margin:8px 0 0 0;height:7px;">
+              <div id="fiveKGoalBar" class="progress-fill progress-fill-indigo" style="width:24%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-3">
+          <select id="runTypeInput" class="field-select">
+            <option value="Zone 2 Base">Zone 2 Base</option>
+            <option value="Threshold Intervals">Intervals</option>
+            <option value="1-Mile Time Trial">1-Mile Trial</option>
+            <option value="5K Time Trial">5K Trial</option>
+          </select>
+          <input id="runDistInput" type="number" step="0.01" inputmode="decimal" placeholder="Dist (mi)" class="field-input mono" />
+          <input id="runTimeInput" type="text" placeholder="mm:ss" class="field-input mono" />
+        </div>
+        <button id="logRunBtn" type="button" class="coral-cta mt-2">Log Run &amp; Calculate Pace</button>
+        <div id="runHistoryList" class="log-list"></div>
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 3: NUTRITION & RECOMP ==================== -->
+    <section id="tab-nutrition" class="view-panel">
+
+      <div class="bento-hero">
+        <div class="row-wrap">
+          <div>
+            <h2 class="card-title" style="font-size:18px;">Weekly Calorie Bank</h2>
+            <p class="sub-text">15,750 kcal/wk budget · 240 → 205 lbs recomp</p>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button id="calModeFlexBtn" type="button" class="neu-btn" style="padding:7px 10px;font-size:11px;font-weight:700;">Weekend Flex</button>
+            <button id="calModeSteadyBtn" type="button" class="neu-btn" style="padding:7px 10px;font-size:11px;font-weight:700;">Steady 2,250</button>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="neu-well metric-box">
+            <div class="metric-label">Weekly Logged</div>
+            <div id="weeklyKcalLogged" class="metric-val">0 / 15,750</div>
+            <div id="weeklyKcalRemaining" class="metric-sub text-cobalt">15,750 kcal left</div>
+          </div>
+          <div class="neu-well metric-box">
+            <div class="metric-label">Today's Target</div>
+            <div id="todayKcalTargetText" class="metric-val">2,100 kcal</div>
+            <div class="metric-sub text-coral">185g Protein Anchor</div>
+          </div>
+        </div>
+
+        <div class="progress-track">
+          <div id="weeklyBankBar" class="progress-fill" style="width:0%;"></div>
+        </div>
+
+        <!-- 7-Day Calorie Bar Chart -->
+        <div id="weeklyBarChart" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:78px;padding-top:8px;"></div>
+      </div>
+
+      <div class="bento-card">
+        <div class="row-between">
+          <h3 id="nutriDayHeader" class="card-title">Log Day Nutrition</h3>
+          <span id="proteinProgressPill" class="badge-soft">0 / 185g Pro</span>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="neu-well metric-box">
+            <div class="metric-label">Calories (kcal)</div>
+            <input id="inputKcal" type="number" inputmode="numeric" placeholder="2100" class="mono" style="width:100%;margin-top:4px;border:none;background:transparent;color:var(--ink);font-size:15px;font-weight:800;outline:none;" />
+          </div>
+          <div class="neu-well metric-box">
+            <div class="metric-label">Protein (g)</div>
+            <input id="inputPro" type="number" inputmode="numeric" placeholder="185" class="mono" style="width:100%;margin-top:4px;border:none;background:transparent;color:var(--ink);font-size:15px;font-weight:800;outline:none;" />
+          </div>
+          <div class="neu-well metric-box">
+            <div class="metric-label">Carbs (g)</div>
+            <input id="inputCarb" type="number" inputmode="numeric" placeholder="215" class="mono" style="width:100%;margin-top:4px;border:none;background:transparent;color:var(--ink);font-size:15px;font-weight:800;outline:none;" />
+          </div>
+          <div class="neu-well metric-box">
+            <div class="metric-label">Fats (g)</div>
+            <input id="inputFat" type="number" inputmode="numeric" placeholder="65" class="mono" style="width:100%;margin-top:4px;border:none;background:transparent;color:var(--ink);font-size:15px;font-weight:800;outline:none;" />
+          </div>
+        </div>
+
+        <button id="saveNutritionBtn" type="button" class="primary-cta mt-2">Save Day Nutrition</button>
+
+        <!-- Daily Habits & Supplements Checklist -->
+        <div style="margin-top:14px;">
+          <div class="section-eyebrow">Daily Habits &amp; Supplements</div>
+          <div id="dailyHabitsList" class="checklist-stack" style="margin-top:8px;"></div>
+        </div>
+      </div>
+
+      <div class="bento-card">
+        <div class="row-between">
+          <div>
+            <h3 class="card-title">Body Weight Recomp Tracker</h3>
+            <p class="sub-text">240.0 lbs start → 200–210 lbs (20–22% BF)</p>
+          </div>
+          <span id="recompDeltaBadge" class="badge-soft badge-coral">0.0 lbs</span>
+        </div>
+
+        <div class="neu-well chart-box">
+          <div id="weightChartContainer" class="svg-wrap" style="height:130px;"></div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <input id="weightInput" type="number" step="0.1" inputmode="decimal" placeholder="Morning weight (lbs)" class="field-input mono" style="flex:1;" />
+          <button id="logWeightBtn" type="button" class="coral-cta" style="width:auto;padding:11px 16px;white-space:nowrap;">Log Weight</button>
+        </div>
+
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--well-border);">
+          <div class="section-eyebrow">Backup &amp; Restore</div>
+          <div class="form-grid-3">
+            <button id="exportJsonBtn" type="button" class="neu-btn" style="padding:10px 6px;font-size:11.5px;font-weight:700;">Export JSON</button>
+            <button id="toggleImportBtn" type="button" class="neu-btn" style="padding:10px 6px;font-size:11.5px;font-weight:700;">Import JSON</button>
+            <button id="resetAllBtn" type="button" class="neu-btn text-coral" style="padding:10px 6px;font-size:11.5px;font-weight:700;">Reset Data</button>
+          </div>
+          <div id="importBox" class="hidden mt-2">
+            <textarea id="importTextarea" rows="3" placeholder="Paste exported JSON backup here..." class="field-input mono" style="font-size:11.5px;"></textarea>
+            <button id="confirmImportBtn" type="button" class="primary-cta mt-2">Apply Restored Backup</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== TAB 4: MOBILITY ==================== -->
+    <section id="tab-mobility" class="view-panel">
+
+      <div class="bento-hero">
+        <div class="row-between">
+          <div>
+            <span class="section-eyebrow text-cobalt">Daily Longevity Habit</span>
+            <h2 class="hero-title" style="margin-top:3px;">10-Min Morning Joint Brush</h2>
+          </div>
+          <span id="mobilityStreakBadge" class="badge-soft badge-coral">0 / 7 Days</span>
+        </div>
+
+        <div class="neu-well timer-well">
+          <div id="drillStepPill" class="section-eyebrow">Drill 1 of 5</div>
+          <div id="drillTitleDisplay" style="font-size:17px;font-weight:800;color:var(--ink);margin-top:4px;">Thoracic Open-Book Rotations</div>
+          <p id="drillCueDisplay" class="sub-text" style="margin-top:6px;">Side-lying, knees stacked &amp; pinned at 90°. Rotate upper back only; 75s per side.</p>
+          <div id="drillTimerDisplay" class="timer-clock">02:30</div>
+
+          <div class="form-grid-3">
+            <button id="timerToggleBtn" type="button" class="primary-cta" style="padding:11px 8px;">Start</button>
+            <button id="nextDrillBtn" type="button" class="neu-btn" style="padding:11px 8px;font-size:12.5px;font-weight:700;">Next Drill</button>
+            <button id="resetTimerBtn" type="button" class="neu-btn" style="padding:11px 8px;font-size:12.5px;font-weight:700;">Reset</button>
+          </div>
+        </div>
+
+        <div id="mobilityDrillList" class="checklist-stack"></div>
+
+        <div style="margin-top:14px;">
+          <div class="section-eyebrow">7-Day Joint Brush Streak (Tap to Toggle)</div>
+          <div id="mobilityStreakRow" class="day-strip" style="margin-top:8px;"></div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Floating Bottom Glass Dock -->
+  <nav class="bottom-dock">
+    <div class="dock-grid">
+      <button id="nav-today" type="button" data-tab="today" class="neu-btn dock-btn active-btn">Today</button>
+      <button id="nav-performance" type="button" data-tab="performance" class="neu-btn dock-btn">Strength</button>
+      <button id="nav-nutrition" type="button" data-tab="nutrition" class="neu-btn dock-btn">Nutrition</button>
+      <button id="nav-mobility" type="button" data-tab="mobility" class="neu-btn dock-btn">Mobility</button>
+    </div>
+  </nav>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. BULLETPROOF SANDBOX STORAGE WRAPPER (iOS QuickLook Safe)
+      // =========================================================================
+      var memoryStore = {};
+
+      function safeGetItem(key) {
+        try {
+          return window.localStorage.getItem(key);
+        } catch (e) {
+          return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : null;
+        }
+      }
+
+      function safeSetItem(key, val) {
+        memoryStore[key] = val;
+        try {
+          window.localStorage.setItem(key, val);
+        } catch (e) {}
+      }
+
+      function escapeHtml(val) {
+        return String(val == null ? '' : val)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      // =========================================================================
+      // 2. THEME MANAGEMENT (Default Light Mode for Clean Keynote Look)
+      // =========================================================================
+      var THEME_KEY = 'workoutos_theme_v2';
+
+      function applyTheme(theme) {
+        var isDark = theme === 'dark';
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        var sunEl = document.getElementById('sunIcon');
+        var moonEl = document.getElementById('moonIcon');
+        if (sunEl && moonEl) {
+          if (isDark) {
+            sunEl.classList.remove('hidden');
+            moonEl.classList.add('hidden');
+          } else {
+            sunEl.classList.add('hidden');
+            moonEl.classList.remove('hidden');
+          }
+        }
+      }
+
+      function initTheme() {
+        var saved = safeGetItem(THEME_KEY);
+        applyTheme(saved === 'dark' ? 'dark' : 'light');
+      }
+
+      function toggleTheme() {
+        var next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+        applyTheme(next);
+        safeSetItem(THEME_KEY, next);
+        renderStrengthChart();
+        renderWeightChart();
+      }
+
+      // =========================================================================
+      // 3. TRAINING & MOBILITY PLAN DATA
+      // =========================================================================
+      var DAYS_ORDER = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+      var PLAN_DATA = {
+        Mon: {
+          title: 'Lower A — Squat Focus & Core',
+          subtitle: 'Primary Squat strength + single-leg & trunk stability',
+          duration: '55–65 min',
+          hasPostCardio: true,
+          habitNote: 'Minimum Viable Rule: Short on time? Complete Barbell Back Squat + 1 Core drill (25 min) and count the day as a win.',
+          items: [
+            { id: 'mon-m1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Open-books, Shoulder CARs, 90/90 switches, World\'s Greatest Stretch, Ankle rocks', mvw: true },
+            { id: 'mon-w1', tag: 'Primer', name: 'Lower Warm-Up (6 min)', detail: 'Banded ankle dorsiflexion rocks (10/side), 90/90 switches, glute bridges (2×10)', mvw: false },
+            { id: 'mon-l1', tag: 'Main Lift', name: 'Barbell Back Squat', detail: '4 × 4–6 reps • Build from 225×5 baseline (leave 1–2 RIR)', mvw: true },
+            { id: 'mon-l2', tag: 'Strength', name: 'Romanian Deadlift or Trap Bar RDL', detail: '3 × 6–8 reps • Controlled eccentric, flat lower back', mvw: false },
+            { id: 'mon-l3', tag: 'Accessory', name: 'Bulgarian Split Squat or Reverse Lunge', detail: '3 × 8 / leg • Single-leg knee & ankle control for court sports', mvw: false },
+            { id: 'mon-l4', tag: 'Ankles', name: 'Seated or Standing Calf Raises', detail: '3 × 12–15 reps • 2–3 sec pause at bottom for Achilles durability', mvw: false },
+            { id: 'mon-c1', tag: 'Core', name: 'Hanging Knee/Leg Raises + Dead Bugs', detail: '3 × 8–12 raises + 3 × 8/side dead bugs', mvw: true }
+          ]
+        },
+        Tue: {
+          title: 'Rec League Game (PM)',
+          subtitle: 'Evening basketball or structured bye-week session',
+          duration: '45 min',
+          hasPostCardio: false,
+          habitNote: 'Toggle between Rec League Game (PM) and 3 Bye-Week options whenever your league has an off-week.',
+          tracks: {
+            game: {
+              label: 'Rec League Game (PM)',
+              title: 'Rec League Basketball (PM)',
+              subtitle: 'Smart dynamic primer + capped court minutes + walk cooldown',
+              duration: '45 min',
+              items: [
+                { id: 'tue-g1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Daily spine, shoulder, hip & ankle lubrication', mvw: true },
+                { id: 'tue-g2', tag: 'AM Engine', name: 'Easy 15–20 Min Walk or Spin', detail: 'Light blood flow without leg fatigue before evening game', mvw: false },
+                { id: 'tue-g3', tag: 'Pre-Game', name: '6-Min Dynamic Court Primer', detail: 'Leg swings, ankle rocks, lateral shuffles, shoulder CARs (never play cold)', mvw: true },
+                { id: 'tue-g4', tag: 'Game', name: 'Rec League Basketball', detail: 'Cap active minutes smartly; focus on controlled deceleration', mvw: true },
+                { id: 'tue-g5', tag: 'Recovery', name: '5–10 Min Post-Game Walk Cooldown', detail: 'Downshift heart rate & rehydrate with electrolytes', mvw: false }
+              ]
+            },
+            intervals: {
+              label: 'Bye: Threshold Intervals',
+              title: 'Bye: Threshold Intervals',
+              subtitle: 'Builds aerobic threshold toward 7:00 mile & 23:00 5K',
+              duration: '35 min',
+              items: [
+                { id: 'tue-i1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Focus on ankle dorsiflexion and hip flexors', mvw: true },
+                { id: 'tue-i2', tag: 'Warm-Up', name: '6-Min Run Primer + 2 Strides', detail: 'Leg swings, A-skips, 2 × 60m smooth build-up strides', mvw: true },
+                { id: 'tue-i3', tag: 'Main Set', name: '5–6 × 3 Min Threshold Intervals', detail: '~7:45–8:15/mi brisk controlled effort w/ 90s easy walk/jog rest', mvw: true },
+                { id: 'tue-i4', tag: 'Cooldown', name: '5-Min Walk + Couch Stretch', detail: '60s/side hip flexor stretch + slow calf raises', mvw: false }
+              ]
+            },
+            engine: {
+              label: 'Bye: Low-Impact Engine + Flow',
+              title: 'Bye: Low-Impact Engine + Flow',
+              subtitle: 'Zero-impact cardio + Taekwondo-inspired mobility',
+              duration: '50 min',
+              items: [
+                { id: 'tue-e1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Full daily joint rotation routine', mvw: true },
+                { id: 'tue-e2', tag: 'Cardio', name: '35-Min Bike, Rower or Incline Walk', detail: 'Steady conversational Zone 2 heart rate', mvw: true },
+                { id: 'tue-e3', tag: 'Flow', name: '15-Min Hip, Thoracic & Ankle Flow', detail: '90/90 transitions, open-books, elevated pigeon & deep squat hold', mvw: true }
+              ]
+            },
+            solo: {
+              label: 'Bye: Solo Hoops & Agility',
+              title: 'Bye: Solo Hoops & Agility',
+              subtitle: 'Skill work & controlled lateral deceleration drills',
+              duration: '35 min',
+              items: [
+                { id: 'tue-s1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Prepare shoulders and ankles for shooting & footwork', mvw: true },
+                { id: 'tue-s2', tag: 'Warm-Up', name: '6-Min Dynamic Leg Swings & Ankle Rocks', detail: 'Classic dynamic hip & ankle prep', mvw: true },
+                { id: 'tue-s3', tag: 'Court', name: '25-Min Solo Shooting & Lateral Footwork', detail: 'Controlled 75% defensive slides, closeouts & rhythm shooting', mvw: true }
+              ]
+            }
+          }
+        },
+        Wed: {
+          title: 'Upper A — Bench, Pull, Shoulders & Core',
+          subtitle: 'Shoulder-safe pressing + 2:1 pull-to-push ratio',
+          duration: '55–65 min',
+          hasPostCardio: true,
+          habitNote: 'Shoulder Guardrail: Keep elbows tucked ~45° on bench press and lead with elbows (no trap shrug) on lateral raises.',
+          items: [
+            { id: 'wed-m1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Extra focus on thoracic open-books and slow shoulder CARs', mvw: true },
+            { id: 'wed-w1', tag: 'Primer', name: 'Shoulder & Scapular Primer (6 min)', detail: 'Band pull-aparts (2×15), wall slides (2×8), dead hangs (2×25s)', mvw: true },
+            { id: 'wed-l1', tag: 'Main Lift', name: 'Barbell Bench Press (or Pause/Incline)', detail: '4 × 4–6 reps • Build from 225×4 baseline pain-free', mvw: true },
+            { id: 'wed-l2', tag: 'Pull', name: 'Chest-Supported or Cable Row', detail: '4 × 6–8 reps • Pause 1s with shoulder blades retracted', mvw: false },
+            { id: 'wed-l3', tag: 'Press', name: 'Landmine or Neutral-Grip Incline Press', detail: '3 × 8–10 reps • Joint-friendly overhead angle', mvw: false },
+            { id: 'wed-l4', tag: 'Pull', name: 'Neutral-Grip Lat Pulldown or Pull-Ups', detail: '3 × 8–10 reps • Full stretch at top without shrugging', mvw: false },
+            { id: 'wed-l5', tag: 'Shoulders', name: 'Lateral Raises (DB or Cable)', detail: '3 × 12–15 reps • Lead with elbows, controlled lowering', mvw: false },
+            { id: 'wed-c1', tag: 'Core', name: 'Pallof Press or Suitcase Carry', detail: '3 × 10–12/side or 30 yds/side anti-rotation stability', mvw: true }
+          ]
+        },
+        Thu: {
+          title: 'Zone 2 Base Run + Ankle/Hip Care',
+          subtitle: 'Conversational aerobic base for 7:00 mile & 23:00 5K',
+          duration: '35–45 min',
+          hasPostCardio: false,
+          habitNote: 'Pacing Rule: Keep Thursday strictly conversational (~9:30–10:30/mi early on). You should be able to speak full sentences.',
+          items: [
+            { id: 'thu-m1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Loosen hips and ankles before running', mvw: true },
+            { id: 'thu-w1', tag: 'Warm-Up', name: '5-Min Dynamic Run Prep', detail: 'Front/side leg swings (12 each), ankle rocks, glute bridges', mvw: true },
+            { id: 'thu-r1', tag: 'Run', name: '25–40 Min Easy Zone 2 Base Run', detail: 'Steady nasal/conversational effort; build aerobic capillary density', mvw: true },
+            { id: 'thu-p1', tag: 'Post-Run', name: 'Slow Eccentric Calf Raises + Elevated Pigeon', detail: '2×12 step calf raises + 60s/side hip & glute release', mvw: false }
+          ]
+        },
+        Fri: {
+          title: 'Lower B (Deadlift), Upper Hypertrophy, Traps & Forearms',
+          subtitle: 'Posterior chain power + upper-back, trap & grip durability',
+          duration: '60–70 min',
+          hasPostCardio: true,
+          habitNote: 'Minimum Viable Rule: Short on time? Hit Deadlift + Neutral-Grip DB Bench + Ab Rollouts/Crunches.',
+          items: [
+            { id: 'fri-m1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Hip hinges, thoracic rotation & ankle mobility', mvw: true },
+            { id: 'fri-w1', tag: 'Primer', name: 'Hinge & Upper-Back Primer (6 min)', detail: 'Bodyweight hip hinges, open-books, band pull-aparts (2×15)', mvw: false },
+            { id: 'fri-l1', tag: 'Main Lift', name: 'Deadlift (Trap Bar or Conventional)', detail: '3 × 3–5 reps • Build from 315×5 baseline with strict brace', mvw: true },
+            { id: 'fri-l2', tag: 'Upper', name: 'Neutral-Grip DB Bench or Incline Press', detail: '3 × 8–10 reps • Shoulder-friendly pressing volume', mvw: true },
+            { id: 'fri-l3', tag: 'Upper', name: 'Single-Arm DB Row', detail: '3 × 10–12 / arm • Full lat stretch & controlled pull', mvw: false },
+            { id: 'fri-l4', tag: 'Shoulders', name: 'Face Pulls + Rear Delt Flyes', detail: '3 × 12–15 each • External rotation & posture balance', mvw: false },
+            { id: 'fri-l5', tag: 'Traps', name: 'DB/Trap-Bar Shrugs or Farmer\'s Carries', detail: '3 × 10–12 shrugs (1s squeeze) or 3 × 35 yds heavy carries', mvw: false },
+            { id: 'fri-l6', tag: 'Forearms', name: 'Reverse Barbell/EZ Curls or Wrist Curls', detail: '2–3 × 12–15 reps • Brachioradialis, wrist & grip endurance', mvw: false },
+            { id: 'fri-c1', tag: 'Core', name: 'Ab Wheel Rollouts or Cable Crunches', detail: '3 × 10–12 reps • Brace ribs down, zero lower-back sag', mvw: true }
+          ]
+        },
+        Sat: {
+          title: 'Hoops / Soccer Game',
+          subtitle: 'Play if numbers show; seamless aerobic fallback if not',
+          duration: '45–60 min',
+          hasPostCardio: false,
+          habitNote: 'No wasted Saturdays: Switch to Fallback: 40m Engine + Mobility immediately if pickup numbers fall through.',
+          tracks: {
+            game: {
+              label: 'Hoops / Soccer Game',
+              title: 'Hoops / Soccer Game',
+              subtitle: 'Dynamic court/field play with smart warm-up & cooldown',
+              duration: '45–60 min',
+              items: [
+                { id: 'sat-g1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Full hip, ankle & thoracic prep', mvw: true },
+                { id: 'sat-g2', tag: 'Pre-Game', name: '6-Min Court/Field Dynamic Warm-Up', detail: 'Leg swings, ankle rocks, lateral shuffles, shoulder CARs', mvw: true },
+                { id: 'sat-g3', tag: 'Game', name: 'Basketball or Soccer Session', detail: 'Play smart, cap intense minutes early on, prioritize clean footwork', mvw: true },
+                { id: 'sat-g4', tag: 'Cooldown', name: '5–10 Min Walk Cooldown + Hydration', detail: 'Gradual heart rate recovery & ankle/calf decompression', mvw: false }
+              ]
+            },
+            fallback: {
+              label: 'Fallback: 40m Engine + Mobility',
+              title: 'Fallback: 40m Engine + Mobility',
+              subtitle: 'Steady calorie burn & joint restoration when no game runs',
+              duration: '50 min',
+              items: [
+                { id: 'sat-f1', tag: 'Mobility', name: '10-Min Morning Joint Brush', detail: 'Morning spine, hip & shoulder lubrication', mvw: true },
+                { id: 'sat-f2', tag: 'Cardio', name: '40-Min Brisk Walk, Bike or Rower', detail: 'Keep weekly energy output steady without high-impact stress', mvw: true },
+                { id: 'sat-f3', tag: 'Mobility', name: '10-Min Hip, Thoracic & Calf Flow', detail: 'Couch stretch, 90/90 switches & deep squat ankle rocks', mvw: true }
+              ]
+            }
+          }
+        },
+        Sun: {
+          title: 'Active Recovery & Weekly Reset',
+          subtitle: 'Steps, extended mobility & weekly nutrition check-in',
+          duration: '45 min',
+          hasPostCardio: false,
+          habitNote: 'Weekly Reset: Log morning weigh-in, review your 15,750 kcal weekly bank, and prep Mon–Wed high-protein lunches.',
+          items: [
+            { id: 'sun-m1', tag: 'Mobility', name: '15-Min Extended Joint Brush & Foam Roll', detail: 'Morning Joint Brush + upper-back/quad foam roll + couch stretch', mvw: true },
+            { id: 'sun-w1', tag: 'Movement', name: '30–45 Min Brisk Outdoor Walk', detail: 'Aim for 8,000–10,000 steps to aid recovery & calorie burn', mvw: true },
+            { id: 'sun-a1', tag: 'Reset', name: 'Weekly Weigh-In & Meal Prep', detail: 'Log rolling weight avg & prep Mon–Wed protein anchors', mvw: true }
+          ]
+        }
+      };
+
+      var MOBILITY_DRILLS = [
+        {
+          title: 'Thoracic Open-Book Rotations',
+          seconds: 150,
+          cue: 'Side-lying with knees stacked & pinned at 90°. Rotate upper back and reach arm open while exhaling (75s/side).'
+        },
+        {
+          title: 'Shoulder CARs (Controlled Rotations)',
+          seconds: 120,
+          cue: 'Stand tall with ribs tucked. Sweep straight arm through your largest pain-free circle (4 slow reps forward & back per arm).'
+        },
+        {
+          title: '90/90 Hip Switches',
+          seconds: 90,
+          cue: 'Sit tall with front and back knees at 90°. Smoothly rotate knees side-to-side to restore Taekwondo-era hip rotation.'
+        },
+        {
+          title: 'World\'s Greatest Stretch + Reach',
+          seconds: 120,
+          cue: 'Step into deep lunge, drop inside elbow toward instep, then rotate chest and hand toward ceiling (4 slow reps/side).'
+        },
+        {
+          title: 'Deep Squat Hold + Ankle Rocks',
+          seconds: 120,
+          cue: 'Hold rack or doorframe for balance, sink deep into squat, and gently shift weight side-to-side over toes.'
+        }
+      ];
+
+      var DAILY_HABITS = [
+        { key: 'creatine', label: '5g Creatine Monohydrate', detail: 'Maintain full saturation daily' },
+        { key: 'water', label: '3.5–4.0L Water + Electrolytes', detail: 'Supports recovery & creatine hydration' },
+        { key: 'steps', label: '8,000+ Daily Steps', detail: 'Keeps NEAT and weekly deficit steady' },
+        { key: 'jointBrush', label: '10-Min Morning Joint Brush', detail: 'Daily spine, shoulder, hip & ankle mobility' }
+      ];
+
+      // =========================================================================
+      // 4. APPLICATION STATE
+      // =========================================================================
+      var STORAGE_KEY = 'workoutos_state_v2';
+
+      function getDefaultState() {
+        var todayIdx = (new Date().getDay() + 6) % 7;
+        var nutri = {};
+        var habits = {};
+        DAYS_ORDER.forEach(function (d) {
+          nutri[d] = { kcal: 0, pro: 0, carb: 0, fat: 0 };
+          habits[d] = { creatine: false, water: false, steps: false, jointBrush: false };
+        });
+        return {
+          selectedDay: DAYS_ORDER[todayIdx],
+          mvwMode: false,
+          tuesdayTrack: 'game',
+          saturdayTrack: 'game',
+          calorieMode: 'flex',
+          completedItems: {},
+          postCardio: {
+            Mon: { done: false, modality: 'Stationary Bike (Zone 2)', mins: 15 },
+            Wed: { done: false, modality: 'Incline Treadmill Walk', mins: 15 },
+            Fri: { done: false, modality: 'Stationary Bike (Zone 2)', mins: 15 }
+          },
+          soreness: { shoulder: 2, ankle: 2, back: 2 },
+          strengthLogs: [
+            { id: 1, lift: 'bench', weight: 225, reps: 4, rir: 2, date: 'Baseline' },
+            { id: 2, lift: 'squat', weight: 225, reps: 5, rir: 2, date: 'Baseline' },
+            { id: 3, lift: 'deadlift', weight: 315, reps: 5, rir: 2, date: 'Baseline' }
+          ],
+          runLogs: [
+            { id: 1, type: 'Zone 2 Base', dist: 3.0, seconds: 1740, date: 'Baseline' }
+          ],
+          nutritionByDay: nutri,
+          habitsByDay: habits,
+          weightLogs: [
+            { date: 'Start', weight: 240.0 }
+          ],
+          mobilityStreakDays: {}
+        };
+      }
+
+      function loadState() {
+        var def = getDefaultState();
+        var raw = safeGetItem(STORAGE_KEY);
+        if (!raw) return def;
+        try {
+          var p = JSON.parse(raw);
+          if (!p || typeof p !== 'object') return def;
+
+          var mergedNutri = Object.assign({}, def.nutritionByDay);
+          if (p.nutritionByDay && typeof p.nutritionByDay === 'object') {
+            DAYS_ORDER.forEach(function (d) {
+              mergedNutri[d] = Object.assign({}, def.nutritionByDay[d], p.nutritionByDay[d] || {});
+            });
+          }
+
+          var mergedHabits = Object.assign({}, def.habitsByDay);
+          if (p.habitsByDay && typeof p.habitsByDay === 'object') {
+            DAYS_ORDER.forEach(function (d) {
+              mergedHabits[d] = Object.assign({}, def.habitsByDay[d], p.habitsByDay[d] || {});
+            });
+          }
+
+          var mergedPostCardio = Object.assign({}, def.postCardio);
+          if (p.postCardio && typeof p.postCardio === 'object') {
+            ['Mon', 'Wed', 'Fri'].forEach(function (d) {
+              mergedPostCardio[d] = Object.assign({}, def.postCardio[d], p.postCardio[d] || {});
+            });
+          }
+
+          return {
+            selectedDay: DAYS_ORDER.indexOf(p.selectedDay) !== -1 ? p.selectedDay : def.selectedDay,
+            mvwMode: Boolean(p.mvwMode),
+            tuesdayTrack: PLAN_DATA.Tue.tracks[p.tuesdayTrack] ? p.tuesdayTrack : 'game',
+            saturdayTrack: PLAN_DATA.Sat.tracks[p.saturdayTrack] ? p.saturdayTrack : 'game',
+            calorieMode: p.calorieMode === 'steady' ? 'steady' : 'flex',
+            completedItems: p.completedItems && typeof p.completedItems === 'object' ? p.completedItems : {},
+            postCardio: mergedPostCardio,
+            soreness: Object.assign({}, def.soreness, p.soreness || {}),
+            strengthLogs: Array.isArray(p.strengthLogs) && p.strengthLogs.length ? p.strengthLogs : def.strengthLogs,
+            runLogs: Array.isArray(p.runLogs) && p.runLogs.length ? p.runLogs : def.runLogs,
+            nutritionByDay: mergedNutri,
+            habitsByDay: mergedHabits,
+            weightLogs: Array.isArray(p.weightLogs) && p.weightLogs.length ? p.weightLogs : def.weightLogs,
+            mobilityStreakDays: p.mobilityStreakDays && typeof p.mobilityStreakDays === 'object' ? p.mobilityStreakDays : {}
+          };
+        } catch (e) {
+          return def;
+        }
+      }
+
+      var appState = loadState();
+
+      function saveState() {
+        safeSetItem(STORAGE_KEY, JSON.stringify(appState));
+      }
+
+      var toastTimer = null;
+      function showToast(msg) {
+        var el = document.getElementById('toastBanner');
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+          el.classList.remove('show');
+        }, 2100);
+      }
+
+      // =========================================================================
+      // 5. NAVIGATION
+      // =========================================================================
+      function switchTab(tabName) {
+        var panels = document.querySelectorAll('.view-panel');
+        for (var i = 0; i < panels.length; i++) {
+          panels[i].classList.remove('active');
+        }
+        var target = document.getElementById('tab-' + tabName);
+        if (target) target.classList.add('active');
+
+        var dockBtns = document.querySelectorAll('.dock-btn');
+        for (var j = 0; j < dockBtns.length; j++) {
+          dockBtns[j].classList.remove('active-btn');
+        }
+        var activeBtn = document.getElementById('nav-' + tabName);
+        if (activeBtn) activeBtn.classList.add('active-btn');
+
+        if (tabName === 'performance') {
+          renderPerformanceTab();
+          requestAnimationFrame(renderStrengthChart);
+        } else if (tabName === 'nutrition') {
+          renderNutritionTab();
+          requestAnimationFrame(renderWeightChart);
+        } else if (tabName === 'mobility') {
+          renderMobilityTab();
+        } else {
+          renderTodayTab();
+        }
+      }
+
+      // =========================================================================
+      // 6. TAB 1: TODAY
+      // =========================================================================
+      function getActiveDaySession(day) {
+        var base = PLAN_DATA[day];
+        if (day === 'Tue') {
+          var t = base.tracks[appState.tuesdayTrack] || base.tracks.game;
+          return {
+            title: t.title,
+            subtitle: t.subtitle,
+            duration: t.duration,
+            habitNote: base.habitNote,
+            hasPostCardio: false,
+            items: t.items
+          };
+        }
+        if (day === 'Sat') {
+          var s = base.tracks[appState.saturdayTrack] || base.tracks.game;
+          return {
+            title: s.title,
+            subtitle: s.subtitle,
+            duration: s.duration,
+            habitNote: base.habitNote,
+            hasPostCardio: false,
+            items: s.items
+          };
+        }
+        return base;
+      }
+
+      function renderTodayTab() {
+        var day = appState.selectedDay;
+
+        // Day Strip
+        var dayRow = document.getElementById('daySelectorRow');
+        dayRow.innerHTML = DAYS_ORDER.map(function (d) {
+          var sel = d === day ? ' active-btn' : '';
+          return '<button type="button" data-action="select-day" data-day="' + d + '" class="neu-btn day-pill' + sel + '">' + d + '</button>';
+        }).join('');
+
+        // MVW Mode
+        var mvwBtn = document.getElementById('mvwToggleBtn');
+        var mvwDot = document.getElementById('mvwDot');
+        if (appState.mvwMode) {
+          mvwBtn.classList.add('active-btn');
+          mvwDot.style.background = '#ffffff';
+        } else {
+          mvwBtn.classList.remove('active-btn');
+          mvwDot.style.background = '#94a3b8';
+        }
+
+        var session = getActiveDaySession(day);
+        document.getElementById('dayBadge').textContent = day.toUpperCase();
+        document.getElementById('dayDurationBadge').textContent = appState.mvwMode ? '25–35 min (MVW)' : session.duration;
+        document.getElementById('dayTitle').textContent = session.title;
+        document.getElementById('daySubtitle').textContent = session.subtitle;
+        document.getElementById('habitNoteBox').textContent = session.habitNote;
+
+        // Dynamic Day Mode (Tue & Sat)
+        var dynBox = document.getElementById('dynamicModeBox');
+        var dynBtns = document.getElementById('dynamicModeButtons');
+        if (day === 'Tue' || day === 'Sat') {
+          dynBox.classList.remove('hidden');
+          var tracks = PLAN_DATA[day].tracks;
+          var activeKey = day === 'Tue' ? appState.tuesdayTrack : appState.saturdayTrack;
+          dynBtns.innerHTML = Object.keys(tracks).map(function (k) {
+            var active = k === activeKey ? ' active-btn' : '';
+            return '<button type="button" data-action="select-track" data-day="' + day + '" data-track="' + k + '" class="neu-btn mode-btn' + active + '">' + escapeHtml(tracks[k].label) + '</button>';
+          }).join('');
+        } else {
+          dynBox.classList.add('hidden');
+        }
+
+        // Session Checklist
+        var visibleItems = appState.mvwMode
+          ? session.items.filter(function (it) { return it.mvw; })
+          : session.items;
+
+        var doneCount = 0;
+        visibleItems.forEach(function (it) {
+          if (appState.completedItems[it.id]) doneCount += 1;
+        });
+
+        var totalCount = visibleItems.length;
+        var pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+        document.getElementById('dayCompletionText').textContent = doneCount + ' / ' + totalCount;
+        document.getElementById('dayProgressBar').style.width = pct + '%';
+
+        var listEl = document.getElementById('workoutChecklist');
+        listEl.innerHTML = visibleItems.map(function (it) {
+          var checked = Boolean(appState.completedItems[it.id]);
+          var tagStyle = (it.tag === 'Main Lift' || it.tag === 'Run' || it.tag === 'Game')
+            ? 'background:var(--cobalt-soft);color:var(--cobalt);'
+            : (it.tag === 'Core' || it.tag === 'Mobility')
+              ? 'background:var(--indigo-soft);color:var(--indigo);'
+              : 'background:var(--coral-soft);color:var(--coral);';
+
+          return (
+            '<div data-action="toggle-item" data-id="' + escapeHtml(it.id) + '" role="button" tabindex="0" class="neu-well check-row' + (checked ? ' is-done' : '') + '">' +
+              '<div class="check-box">' +
+                (checked ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>' : '') +
+              '</div>' +
+              '<div class="check-body">' +
+                '<div class="check-head">' +
+                  '<span class="item-tag" style="' + tagStyle + '">' + escapeHtml(it.tag) + '</span>' +
+                  '<span class="item-name">' + escapeHtml(it.name) + '</span>' +
+                '</div>' +
+                '<p class="item-detail">' + escapeHtml(it.detail) + '</p>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+
+        // Post-Lift Cardio Card
+        var pcCard = document.getElementById('postCardioCard');
+        if (session.hasPostCardio && appState.postCardio[day]) {
+          pcCard.classList.remove('hidden');
+          var pc = appState.postCardio[day];
+          document.getElementById('postCardioModality').value = pc.modality;
+          document.getElementById('postCardioMins').value = pc.mins;
+          var pcBtn = document.getElementById('postCardioToggleBtn');
+          if (pc.done) {
+            pcBtn.textContent = 'Completed ✓';
+            pcBtn.classList.add('active-btn');
+          } else {
+            pcBtn.textContent = 'Mark Done';
+            pcBtn.classList.remove('active-btn');
+          }
+        } else {
+          pcCard.classList.add('hidden');
+        }
+
+        renderSorenessUI();
+      }
+
+      function renderSorenessUI() {
+        var s = appState.soreness;
+        document.getElementById('shoulderSlider').value = s.shoulder;
+        document.getElementById('ankleSlider').value = s.ankle;
+        document.getElementById('backSlider').value = s.back;
+
+        document.getElementById('shoulderVal').textContent = s.shoulder + '/10';
+        document.getElementById('ankleVal').textContent = s.ankle + '/10';
+        document.getElementById('backVal').textContent = s.back + '/10';
+
+        var warnings = [];
+        if (Number(s.shoulder) > 4) {
+          warnings.push('Shoulder soreness (' + s.shoulder + '/10): Swap flat barbell bench for neutral-grip DB press or landmine press today, and add extra band pull-aparts.');
+        }
+        if (Number(s.ankle) > 4) {
+          warnings.push('Ankle soreness (' + s.ankle + '/10): Replace high-impact running or court play with stationary bike/rower + slow eccentric calf raises.');
+        }
+        if (Number(s.back) > 4) {
+          warnings.push('Lower-back tightness (' + s.back + '/10): Keep 2–3 RIR on squats/hinges, emphasize dead bugs/Pallof presses, and avoid heavy spinal loading.');
+        }
+
+        var badge = document.getElementById('jointStatusBadge');
+        var alertBox = document.getElementById('jointAlertBanner');
+        if (warnings.length > 0) {
+          badge.textContent = 'Modify Load';
+          badge.className = 'badge-soft badge-coral';
+          alertBox.classList.remove('hidden');
+          alertBox.innerHTML = warnings.map(escapeHtml).join('<br>');
+        } else {
+          badge.textContent = 'Cleared';
+          badge.className = 'badge-soft';
+          alertBox.classList.add('hidden');
+        }
+      }
+
+      // =========================================================================
+      // 7. TAB 2: STRENGTH & RUNS
+      // =========================================================================
+      function calcEpley1RM(weight, reps) {
+        var w = Number(weight);
+        var r = Number(reps);
+        if (!Number.isFinite(w) || w <= 0 || !Number.isFinite(r) || r <= 0) return 0;
+        if (r === 1) return Math.round(w);
+        return Math.round(w * (1 + r / 30));
+      }
+
+      function formatPaceSeconds(secPerMile) {
+        if (!Number.isFinite(secPerMile) || secPerMile <= 0) return '--:--';
+        var rounded = Math.round(secPerMile);
+        var mins = Math.floor(rounded / 60);
+        var secs = rounded % 60;
+        return mins + ':' + (secs < 10 ? '0' : '') + secs;
+      }
+
+      function parseDurationToSeconds(str) {
+        var clean = String(str || '').trim();
+        if (!clean) return NaN;
+        var parts = clean.split(':').map(function (p) { return p.trim(); });
+        if (parts.some(function (p) { return p === '' || !/^\d+$/.test(p); })) return NaN;
+        if (parts.length === 2) {
+          var m = parseInt(parts[0], 10);
+          var s = parseInt(parts[1], 10);
+          if (s >= 60) return NaN;
+          return m * 60 + s;
+        }
+        if (parts.length === 3) {
+          var h = parseInt(parts[0], 10);
+          var m3 = parseInt(parts[1], 10);
+          var s3 = parseInt(parts[2], 10);
+          if (m3 >= 60 || s3 >= 60) return NaN;
+          return h * 3600 + m3 * 60 + s3;
+        }
+        return NaN;
+      }
+
+      function renderPerformanceTab() {
+        var liftNames = {
+          bench: 'Bench Press',
+          squat: 'Back Squat',
+          deadlift: 'Deadlift',
+          rdl: 'Romanian Deadlift',
+          row: 'Chest-Supported Row'
+        };
+
+        ['bench', 'squat', 'deadlift'].forEach(function (key) {
+          var entries = appState.strengthLogs.filter(function (l) { return l.lift === key; });
+          var latest = entries.length ? entries[entries.length - 1] : null;
+          if (latest) {
+            document.getElementById(key + 'TopText').textContent = latest.weight + ' × ' + latest.reps;
+            document.getElementById(key + '1RMText').textContent = '1RM: ' + calcEpley1RM(latest.weight, latest.reps);
+          }
+        });
+
+        var recentEl = document.getElementById('recentLiftsList');
+        recentEl.innerHTML = appState.strengthLogs.slice().reverse().slice(0, 8).map(function (item) {
+          var rirTxt = item.rir != null && item.rir !== '' ? ' · ' + item.rir + ' RIR' : '';
+          return (
+            '<div class="neu-well log-row">' +
+              '<div>' +
+                '<strong style="color:var(--ink);">' + escapeHtml(liftNames[item.lift] || item.lift) + '</strong>' +
+                '<span style="color:var(--ink-muted);margin-left:6px;font-size:11px;">' + escapeHtml(item.date) + escapeHtml(rirTxt) + '</span>' +
+              '</div>' +
+              '<div class="mono">' +
+                '<strong style="color:var(--ink);">' + Number(item.weight) + '×' + Number(item.reps) + '</strong>' +
+                '<span class="text-cobalt" style="font-size:11px;font-weight:700;margin-left:6px;">(1RM ' + calcEpley1RM(item.weight, item.reps) + ')</span>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+
+        // Runs
+        var validRuns = appState.runLogs.filter(function (r) { return Number(r.dist) > 0 && Number(r.seconds) > 0; });
+        var bestSecPerMile = validRuns.length
+          ? Math.min.apply(null, validRuns.map(function (r) { return r.seconds / r.dist; }))
+          : 580;
+
+        var bestPaceStr = formatPaceSeconds(bestSecPerMile);
+        document.getElementById('bestMilePaceBadge').textContent = 'Best: ' + bestPaceStr + '/mi';
+        document.getElementById('mileGoalSub').textContent = bestPaceStr + ' /mi';
+
+        var milePct = Math.max(8, Math.min(100, Math.round(((630 - bestSecPerMile) / (630 - 420)) * 100)));
+        document.getElementById('mileGoalBar').style.width = milePct + '%';
+
+        var est5kSec = bestSecPerMile * 3.10686;
+        document.getElementById('fiveKGoalSub').textContent = 'Est ' + formatPaceSeconds(est5kSec);
+        var fiveKPct = Math.max(8, Math.min(100, Math.round(((1950 - est5kSec) / (1950 - 1380)) * 100)));
+        document.getElementById('fiveKGoalBar').style.width = fiveKPct + '%';
+
+        var runListEl = document.getElementById('runHistoryList');
+        runListEl.innerHTML = validRuns.slice().reverse().slice(0, 8).map(function (r) {
+          var paceStr = formatPaceSeconds(r.seconds / r.dist);
+          var totalStr = formatPaceSeconds(r.seconds);
+          return (
+            '<div class="neu-well log-row">' +
+              '<div>' +
+                '<strong style="color:var(--ink);">' + escapeHtml(r.type) + '</strong>' +
+                '<span style="color:var(--ink-muted);margin-left:6px;font-size:11px;">' + escapeHtml(r.date) + '</span>' +
+              '</div>' +
+              '<div class="mono">' +
+                '<strong style="color:var(--ink);">' + Number(r.dist) + ' mi</strong>' +
+                '<span style="color:var(--ink-muted);margin:0 4px;">·</span>' +
+                '<span style="color:var(--ink-sub);">' + totalStr + '</span>' +
+                '<span class="text-cobalt" style="font-weight:700;margin-left:6px;">(' + paceStr + '/mi)</span>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+
+        renderStrengthChart();
+      }
+
+      function renderStrengthChart() {
+        var container = document.getElementById('strengthChartContainer');
+        if (!container) return;
+        var w = Math.max(260, container.clientWidth || 320);
+        var h = 145;
+        var padL = 34;
+        var padR = 14;
+        var padT = 14;
+        var padB = 20;
+
+        var isDark = document.documentElement.classList.contains('dark');
+        var seriesConfig = [
+          { key: 'bench', color: isDark ? '#60a5fa' : '#2563eb' },
+          { key: 'squat', color: isDark ? '#fb923c' : '#ea580c' },
+          { key: 'deadlift', color: isDark ? '#818cf8' : '#4f46e5' }
+        ];
+
+        var allVals = [];
+        seriesConfig.forEach(function (s) {
+          appState.strengthLogs.filter(function (l) { return l.lift === s.key; }).forEach(function (l) {
+            allVals.push(calcEpley1RM(l.weight, l.reps));
+          });
+        });
+
+        var minY = Math.max(100, Math.floor((Math.min.apply(null, allVals) - 25) / 25) * 25);
+        var maxY = Math.ceil((Math.max.apply(null, allVals) + 25) / 25) * 25;
+        var spanY = Math.max(50, maxY - minY);
+
+        var svg = '<svg width="100%" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">';
+        [0, 0.5, 1].forEach(function (t) {
+          var y = padT + (h - padT - padB) * (1 - t);
+          var val = Math.round(minY + spanY * t);
+          svg += '<line x1="' + padL + '" y1="' + y + '" x2="' + (w - padR) + '" y2="' + y + '" stroke="var(--chart-grid)" stroke-dasharray="3,3" />';
+          svg += '<text x="' + (padL - 6) + '" y="' + (y + 3) + '" text-anchor="end" fill="var(--ink-muted)" font-size="9" font-family="SF Mono, ui-monospace, Menlo, monospace">' + val + '</text>';
+        });
+
+        seriesConfig.forEach(function (s) {
+          var pts = appState.strengthLogs
+            .filter(function (l) { return l.lift === s.key; })
+            .map(function (l) { return calcEpley1RM(l.weight, l.reps); });
+          if (pts.length === 0) return;
+
+          var coords = pts.map(function (val, idx) {
+            var x = pts.length === 1
+              ? (padL + w - padR) / 2
+              : padL + ((w - padL - padR) * idx) / (pts.length - 1);
+            var y = padT + (h - padT - padB) * (1 - (val - minY) / spanY);
+            return { x: x, y: y };
+          });
+
+          if (coords.length > 1) {
+            var dStr = coords.map(function (c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
+            svg += '<path d="' + dStr + '" fill="none" stroke="' + s.color + '" stroke-width="2.5" stroke-linecap="round" />';
+          }
+          coords.forEach(function (c) {
+            svg += '<circle cx="' + c.x.toFixed(1) + '" cy="' + c.y.toFixed(1) + '" r="4" fill="' + s.color + '" />';
+          });
+        });
+
+        svg += '</svg>';
+        container.innerHTML = svg;
+      }
+
+      // =========================================================================
+      // 8. TAB 3: NUTRITION, HABITS & RECOMP
+      // =========================================================================
+      function getDayCalorieTarget(day) {
+        if (appState.calorieMode === 'steady') return 2250;
+        return (day === 'Sat' || day === 'Sun') ? 2625 : 2100;
+      }
+
+      function renderNutritionTab() {
+        var day = appState.selectedDay;
+        var isFlex = appState.calorieMode === 'flex';
+        document.getElementById('calModeFlexBtn').classList.toggle('active-btn', isFlex);
+        document.getElementById('calModeSteadyBtn').classList.toggle('active-btn', !isFlex);
+
+        var weeklyTotal = 0;
+        DAYS_ORDER.forEach(function (d) {
+          weeklyTotal += Number(appState.nutritionByDay[d].kcal) || 0;
+        });
+
+        var remaining = Math.max(0, 15750 - weeklyTotal);
+        document.getElementById('weeklyKcalLogged').textContent = weeklyTotal.toLocaleString() + ' / 15,750';
+        document.getElementById('weeklyKcalRemaining').textContent = remaining.toLocaleString() + ' kcal left';
+        var bankPct = Math.min(100, Math.round((weeklyTotal / 15750) * 100));
+        document.getElementById('weeklyBankBar').style.width = bankPct + '%';
+
+        // 7-Day Calorie Bar Chart
+        var barChartEl = document.getElementById('weeklyBarChart');
+        barChartEl.innerHTML = DAYS_ORDER.map(function (d) {
+          var logged = Number(appState.nutritionByDay[d].kcal) || 0;
+          var target = getDayCalorieTarget(d);
+          var ratio = Math.min(100, Math.round((logged / target) * 100));
+          var barH = Math.max(6, Math.round((ratio / 100) * 52));
+          var isSelected = d === day;
+          var fill = logged > target + 120
+            ? 'linear-gradient(180deg, #ea580c, #d97706)'
+            : 'linear-gradient(180deg, #2563eb, #4f46e5)';
+          return (
+            '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">' +
+              '<div class="neu-well" style="width:100%;height:54px;display:flex;align-items:flex-end;padding:2px;border-radius:9px;">' +
+                '<div style="width:100%;height:' + (logged > 0 ? barH : 4) + 'px;border-radius:7px;background:' + (logged > 0 ? fill : 'rgba(148,163,184,0.25)') + ';"></div>' +
+              '</div>' +
+              '<span class="mono" style="font-size:10px;font-weight:' + (isSelected ? '800' : '600') + ';color:' + (isSelected ? 'var(--cobalt)' : 'var(--ink-muted)') + ';">' + d + '</span>' +
+            '</div>'
+          );
+        }).join('');
+
+        var todayTarget = getDayCalorieTarget(day);
+        document.getElementById('todayKcalTargetText').textContent = todayTarget.toLocaleString() + ' kcal';
+        document.getElementById('nutriDayHeader').textContent = day + ' Nutrition & Macros';
+
+        var entry = appState.nutritionByDay[day];
+        document.getElementById('inputKcal').value = entry.kcal || '';
+        document.getElementById('inputPro').value = entry.pro || '';
+        document.getElementById('inputCarb').value = entry.carb || '';
+        document.getElementById('inputFat').value = entry.fat || '';
+        document.getElementById('proteinProgressPill').textContent = (entry.pro || 0) + ' / 185g Pro';
+
+        // Daily Habits Checklist
+        var dayHabits = appState.habitsByDay[day];
+        var habitsEl = document.getElementById('dailyHabitsList');
+        habitsEl.innerHTML = DAILY_HABITS.map(function (h) {
+          var checked = Boolean(dayHabits[h.key]);
+          return (
+            '<div data-action="toggle-habit" data-habit="' + h.key + '" role="button" tabindex="0" class="neu-well check-row' + (checked ? ' is-done' : '') + '">' +
+              '<div class="check-box">' +
+                (checked ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>' : '') +
+              '</div>' +
+              '<div class="check-body">' +
+                '<span class="item-name">' + escapeHtml(h.label) + '</span>' +
+                '<p class="item-detail">' + escapeHtml(h.detail) + '</p>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+
+        // Weight Metrics
+        var weights = appState.weightLogs;
+        var recent7 = weights.slice(-7);
+        var avg7 = recent7.reduce(function (acc, w) { return acc + Number(w.weight); }, 0) / recent7.length;
+        document.getElementById('headerWeight').textContent = avg7.toFixed(1) + ' lbs';
+
+        var latestW = Number(weights[weights.length - 1].weight);
+        var delta = latestW - 240.0;
+        document.getElementById('recompDeltaBadge').textContent = (delta <= 0 ? '' : '+') + delta.toFixed(1) + ' lbs';
+
+        renderWeightChart();
+      }
+
+      function renderWeightChart() {
+        var container = document.getElementById('weightChartContainer');
+        if (!container) return;
+        var w = Math.max(260, container.clientWidth || 320);
+        var h = 130;
+        var padL = 36;
+        var padR = 14;
+        var padT = 14;
+        var padB = 18;
+
+        var pts = appState.weightLogs.map(function (item) { return Number(item.weight); });
+        var minY = Math.min(200, Math.floor((Math.min.apply(null, pts) - 5) / 5) * 5);
+        var maxY = Math.max(245, Math.ceil((Math.max.apply(null, pts) + 5) / 5) * 5);
+        var spanY = Math.max(20, maxY - minY);
+        var isDark = document.documentElement.classList.contains('dark');
+        var lineColor = isDark ? '#60a5fa' : '#2563eb';
+        var goalColor = isDark ? '#fb923c' : '#ea580c';
+
+        var svg = '<svg width="100%" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">';
+        var goalY = padT + (h - padT - padB) * (1 - (205 - minY) / spanY);
+        svg += '<line x1="' + padL + '" y1="' + goalY.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + goalY.toFixed(1) + '" stroke="' + goalColor + '" stroke-dasharray="4,4" stroke-width="1.5" />';
+        svg += '<text x="' + (padL - 5) + '" y="' + (goalY + 3).toFixed(1) + '" text-anchor="end" fill="' + goalColor + '" font-size="9" font-family="SF Mono, ui-monospace, Menlo, monospace">205</text>';
+
+        var coords = pts.map(function (val, idx) {
+          var x = pts.length === 1
+            ? (padL + w - padR) / 2
+            : padL + ((w - padL - padR) * idx) / (pts.length - 1);
+          var y = padT + (h - padT - padB) * (1 - (val - minY) / spanY);
+          return { x: x, y: y };
+        });
+
+        if (coords.length > 1) {
+          var dStr = coords.map(function (c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
+          svg += '<path d="' + dStr + '" fill="none" stroke="' + lineColor + '" stroke-width="2.5" stroke-linecap="round" />';
+        }
+        coords.forEach(function (c) {
+          svg += '<circle cx="' + c.x.toFixed(1) + '" cy="' + c.y.toFixed(1) + '" r="4" fill="' + lineColor + '" />';
+        });
+
+        svg += '</svg>';
+        container.innerHTML = svg;
+      }
+
+      // =========================================================================
+      // 9. TAB 4: MOBILITY TIMER & 7-DAY STREAK
+      // =========================================================================
+      var currentDrillIdx = 0;
+      var drillSecondsLeft = MOBILITY_DRILLS[0].seconds;
+      var mobilityInterval = null;
+
+      function stopMobilityTimer() {
+        if (mobilityInterval !== null) {
+          clearInterval(mobilityInterval);
+          mobilityInterval = null;
+        }
+        var btn = document.getElementById('timerToggleBtn');
+        if (btn) btn.textContent = 'Start';
+      }
+
+      function updateDrillTimerText() {
+        var m = Math.floor(drillSecondsLeft / 60);
+        var s = drillSecondsLeft % 60;
+        var el = document.getElementById('drillTimerDisplay');
+        if (el) el.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+      }
+
+      function selectDrill(idx) {
+        stopMobilityTimer();
+        currentDrillIdx = (idx + MOBILITY_DRILLS.length) % MOBILITY_DRILLS.length;
+        drillSecondsLeft = MOBILITY_DRILLS[currentDrillIdx].seconds;
+        renderMobilityTab();
+      }
+
+      function toggleMobilityTimer() {
+        var btn = document.getElementById('timerToggleBtn');
+        if (mobilityInterval !== null) {
+          stopMobilityTimer();
+          return;
+        }
+        if (drillSecondsLeft <= 0) {
+          drillSecondsLeft = MOBILITY_DRILLS[currentDrillIdx].seconds;
+        }
+        btn.textContent = 'Pause';
+        mobilityInterval = setInterval(function () {
+          drillSecondsLeft -= 1;
+          if (drillSecondsLeft <= 0) {
+            drillSecondsLeft = 0;
+            updateDrillTimerText();
+            stopMobilityTimer();
+            showToast(MOBILITY_DRILLS[currentDrillIdx].title + ' complete!');
+            return;
+          }
+          updateDrillTimerText();
+        }, 1000);
+      }
+
+      function renderMobilityTab() {
+        var drill = MOBILITY_DRILLS[currentDrillIdx];
+        document.getElementById('drillStepPill').textContent = 'Drill ' + (currentDrillIdx + 1) + ' of ' + MOBILITY_DRILLS.length;
+        document.getElementById('drillTitleDisplay').textContent = drill.title;
+        document.getElementById('drillCueDisplay').textContent = drill.cue;
+        updateDrillTimerText();
+
+        var doneDays = 0;
+        DAYS_ORDER.forEach(function (d) {
+          if (appState.mobilityStreakDays[d]) doneDays += 1;
+        });
+        document.getElementById('mobilityStreakBadge').textContent = doneDays + ' / 7 Days';
+
+        var listEl = document.getElementById('mobilityDrillList');
+        listEl.innerHTML = MOBILITY_DRILLS.map(function (d, idx) {
+          var active = idx === currentDrillIdx;
+          var mins = Math.floor(d.seconds / 60);
+          var secs = d.seconds % 60;
+          var durLabel = mins + ':' + (secs < 10 ? '0' : '') + secs;
+          return (
+            '<button type="button" data-action="select-drill" data-idx="' + idx + '" class="neu-btn row-between" style="width:100%;padding:12px 14px;text-align:left;' + (active ? 'border-color:var(--cobalt);' : '') + '">' +
+              '<span style="font-size:12.5px;font-weight:700;color:var(--ink);">' + (idx + 1) + '. ' + escapeHtml(d.title) + '</span>' +
+              '<span class="mono text-cobalt" style="font-size:12px;font-weight:700;">' + durLabel + '</span>' +
+            '</button>'
+          );
+        }).join('');
+
+        var streakRow = document.getElementById('mobilityStreakRow');
+        streakRow.innerHTML = DAYS_ORDER.map(function (d) {
+          var isDone = Boolean(appState.mobilityStreakDays[d]);
+          return '<button type="button" data-action="toggle-streak-day" data-day="' + d + '" class="neu-btn day-pill' + (isDone ? ' active-btn' : '') + '">' + d + '</button>';
+        }).join('');
+      }
+
+      // =========================================================================
+      // 10. EVENT BINDINGS
+      // =========================================================================
+      function bindEvents() {
+        document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
+        var dockBtns = document.querySelectorAll('.dock-btn');
+        for (var i = 0; i < dockBtns.length; i++) {
+          dockBtns[i].addEventListener('click', function () {
+            switchTab(this.getAttribute('data-tab'));
+          });
+        }
+
+        document.getElementById('mvwToggleBtn').addEventListener('click', function () {
+          appState.mvwMode = !appState.mvwMode;
+          saveState();
+          renderTodayTab();
+          showToast(appState.mvwMode ? 'Minimum Viable Mode ON' : 'Full Session Mode');
+        });
+
+        document.getElementById('resetDayChecksBtn').addEventListener('click', function () {
+          var session = getActiveDaySession(appState.selectedDay);
+          session.items.forEach(function (it) {
+            delete appState.completedItems[it.id];
+          });
+          saveState();
+          renderTodayTab();
+          showToast('Day checklist reset');
+        });
+
+        document.getElementById('tab-today').addEventListener('click', function (e) {
+          var target = e.target.closest('[data-action]');
+          if (!target) return;
+          var action = target.getAttribute('data-action');
+          if (action === 'select-day') {
+            appState.selectedDay = target.getAttribute('data-day');
+            saveState();
+            renderTodayTab();
+            renderNutritionTab();
+          } else if (action === 'select-track') {
+            var d = target.getAttribute('data-day');
+            var t = target.getAttribute('data-track');
+            if (d === 'Tue') appState.tuesdayTrack = t;
+            if (d === 'Sat') appState.saturdayTrack = t;
+            saveState();
+            renderTodayTab();
+          } else if (action === 'toggle-item') {
+            var id = target.getAttribute('data-id');
+            appState.completedItems[id] = !appState.completedItems[id];
+            saveState();
+            renderTodayTab();
+          }
+        });
+
+        document.getElementById('postCardioToggleBtn').addEventListener('click', function () {
+          var d = appState.selectedDay;
+          if (!appState.postCardio[d]) return;
+          appState.postCardio[d].done = !appState.postCardio[d].done;
+          appState.postCardio[d].modality = document.getElementById('postCardioModality').value;
+          appState.postCardio[d].mins = parseInt(document.getElementById('postCardioMins').value, 10) || 15;
+          saveState();
+          renderTodayTab();
+          showToast(appState.postCardio[d].done ? 'Post-lift cardio logged' : 'Unmarked');
+        });
+
+        document.getElementById('postCardioModality').addEventListener('change', function (e) {
+          var d = appState.selectedDay;
+          if (appState.postCardio[d]) {
+            appState.postCardio[d].modality = e.target.value;
+            saveState();
+          }
+        });
+
+        document.getElementById('postCardioMins').addEventListener('change', function (e) {
+          var d = appState.selectedDay;
+          if (appState.postCardio[d]) {
+            appState.postCardio[d].mins = parseInt(e.target.value, 10) || 15;
+            saveState();
+          }
+        });
+
+        ['shoulder', 'ankle', 'back'].forEach(function (joint) {
+          document.getElementById(joint + 'Slider').addEventListener('input', function (e) {
+            appState.soreness[joint] = parseInt(e.target.value, 10) || 0;
+            saveState();
+            renderSorenessUI();
+          });
+        });
+
+        document.getElementById('logStrengthBtn').addEventListener('click', function () {
+          var lift = document.getElementById('liftSelect').value;
+          var weight = parseFloat(document.getElementById('liftWeightInput').value);
+          var reps = parseInt(document.getElementById('liftRepsInput').value, 10);
+          var rirRaw = document.getElementById('liftRirInput').value;
+          var rir = rirRaw === '' ? '' : parseInt(rirRaw, 10);
+          if (!Number.isFinite(weight) || weight <= 0 || !Number.isFinite(reps) || reps <= 0) {
+            showToast('Enter valid weight & reps');
+            return;
+          }
+          var dateLabel = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          appState.strengthLogs.push({ id: Date.now(), lift: lift, weight: weight, reps: reps, rir: rir, date: dateLabel });
+          saveState();
+          document.getElementById('liftWeightInput').value = '';
+          document.getElementById('liftRepsInput').value = '';
+          document.getElementById('liftRirInput').value = '';
+          renderPerformanceTab();
+          showToast('Saved ' + weight + '×' + reps + ' (1RM: ' + calcEpley1RM(weight, reps) + ')');
+        });
+
+        document.getElementById('logRunBtn').addEventListener('click', function () {
+          var type = document.getElementById('runTypeInput').value;
+          var dist = parseFloat(document.getElementById('runDistInput').value);
+          var seconds = parseDurationToSeconds(document.getElementById('runTimeInput').value);
+          if (!Number.isFinite(dist) || dist <= 0 || !Number.isFinite(seconds) || seconds <= 0) {
+            showToast('Enter valid distance & mm:ss time');
+            return;
+          }
+          var dateLabel = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          appState.runLogs.push({ id: Date.now(), type: type, dist: dist, seconds: seconds, date: dateLabel });
+          saveState();
+          document.getElementById('runDistInput').value = '';
+          document.getElementById('runTimeInput').value = '';
+          renderPerformanceTab();
+          showToast('Logged ' + dist + ' mi @ ' + formatPaceSeconds(seconds / dist) + '/mi');
+        });
+
+        document.getElementById('calModeFlexBtn').addEventListener('click', function () {
+          appState.calorieMode = 'flex';
+          saveState();
+          renderNutritionTab();
+        });
+        document.getElementById('calModeSteadyBtn').addEventListener('click', function () {
+          appState.calorieMode = 'steady';
+          saveState();
+          renderNutritionTab();
+        });
+
+        document.getElementById('saveNutritionBtn').addEventListener('click', function () {
+          var d = appState.selectedDay;
+          appState.nutritionByDay[d].kcal = Math.max(0, parseInt(document.getElementById('inputKcal').value, 10) || 0);
+          appState.nutritionByDay[d].pro = Math.max(0, parseInt(document.getElementById('inputPro').value, 10) || 0);
+          appState.nutritionByDay[d].carb = Math.max(0, parseInt(document.getElementById('inputCarb').value, 10) || 0);
+          appState.nutritionByDay[d].fat = Math.max(0, parseInt(document.getElementById('inputFat').value, 10) || 0);
+          saveState();
+          renderNutritionTab();
+          showToast(d + ' nutrition saved');
+        });
+
+        document.getElementById('dailyHabitsList').addEventListener('click', function (e) {
+          var row = e.target.closest('[data-action="toggle-habit"]');
+          if (!row) return;
+          var key = row.getAttribute('data-habit');
+          var d = appState.selectedDay;
+          appState.habitsByDay[d][key] = !appState.habitsByDay[d][key];
+          if (key === 'jointBrush') {
+            appState.mobilityStreakDays[d] = appState.habitsByDay[d][key];
+          }
+          saveState();
+          renderNutritionTab();
+          renderMobilityTab();
+        });
+
+        document.getElementById('logWeightBtn').addEventListener('click', function () {
+          var val = parseFloat(document.getElementById('weightInput').value);
+          if (!Number.isFinite(val) || val < 100 || val > 450) {
+            showToast('Enter valid weight in lbs');
+            return;
+          }
+          var dateLabel = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          appState.weightLogs.push({ date: dateLabel, weight: Math.round(val * 10) / 10 });
+          saveState();
+          document.getElementById('weightInput').value = '';
+          renderNutritionTab();
+          showToast('Logged ' + val.toFixed(1) + ' lbs');
+        });
+
+        // Mobility Controls
+        document.getElementById('timerToggleBtn').addEventListener('click', toggleMobilityTimer);
+        document.getElementById('nextDrillBtn').addEventListener('click', function () { selectDrill(currentDrillIdx + 1); });
+        document.getElementById('resetTimerBtn').addEventListener('click', function () { selectDrill(currentDrillIdx); });
+
+        document.getElementById('mobilityDrillList').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-action="select-drill"]');
+          if (!btn) return;
+          selectDrill(parseInt(btn.getAttribute('data-idx'), 10) || 0);
+        });
+
+        document.getElementById('mobilityStreakRow').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-action="toggle-streak-day"]');
+          if (!btn) return;
+          var d = btn.getAttribute('data-day');
+          appState.mobilityStreakDays[d] = !appState.mobilityStreakDays[d];
+          appState.habitsByDay[d].jointBrush = appState.mobilityStreakDays[d];
+          saveState();
+          renderMobilityTab();
+          showToast(d + (appState.mobilityStreakDays[d] ? ' Joint Brush complete' : ' unmarked'));
+        });
+
+        // Backup & Reset
+        document.getElementById('exportJsonBtn').addEventListener('click', function () {
+          var jsonStr = JSON.stringify(appState, null, 2);
+          var ta = document.createElement('textarea');
+          ta.value = jsonStr;
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            showToast('JSON backup copied');
+          } catch (e) {
+            showToast('Unable to copy backup');
+          }
+          document.body.removeChild(ta);
+        });
+
+        document.getElementById('toggleImportBtn').addEventListener('click', function () {
+          document.getElementById('importBox').classList.toggle('hidden');
+        });
+
+        document.getElementById('confirmImportBtn').addEventListener('click', function () {
+          try {
+            var raw = document.getElementById('importTextarea').value.trim();
+            if (!raw) {
+              showToast('Paste JSON backup first');
+              return;
+            }
+            var parsed = JSON.parse(raw);
+            if (!parsed || typeof parsed !== 'object') {
+              showToast('Invalid JSON format');
+              return;
+            }
+            safeSetItem(STORAGE_KEY, JSON.stringify(parsed));
+            appState = loadState();
+            saveState();
+            document.getElementById('importBox').classList.add('hidden');
+            document.getElementById('importTextarea').value = '';
+            renderTodayTab();
+            renderPerformanceTab();
+            renderNutritionTab();
+            renderMobilityTab();
+            showToast('Backup restored');
+          } catch (e) {
+            showToast('Invalid JSON data');
+          }
+        });
+
+        document.getElementById('resetAllBtn').addEventListener('click', function () {
+          appState = getDefaultState();
+          saveState();
+          renderTodayTab();
+          renderPerformanceTab();
+          renderNutritionTab();
+          renderMobilityTab();
+          showToast('Reset to baseline defaults');
+        });
+
+        window.addEventListener('resize', function () {
+          renderStrengthChart();
+          renderWeightChart();
+        });
+      }
+
+      // =========================================================================
+      // 11. BOOTSTRAP
+      // =========================================================================
+      function initApp() {
+        initTheme();
+        bindEvents();
+        renderTodayTab();
+        renderPerformanceTab();
+        renderNutritionTab();
+        renderMobilityTab();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+      } else {
+        initApp();
+      }
+    })();
+  </script>
+</body>
+</html>
